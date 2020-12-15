@@ -13,6 +13,7 @@ import pandas as pd
 import nibabel as ni
 from extract_mrna import extract_mrna
 from make_violin import make_violin
+import matplotlib.backends.backend_pdf as pdf
 
 # Project directory
 data_dir = 'E://Taiwan/Inspectro-Gadget/'
@@ -34,6 +35,8 @@ receptors_list = pd.read_csv(data_dir+'receptors.tsv', delimiter='\t', header=No
 #extract unique receptors
 receptors = receptors_list[1].unique()
 
+out_pdf = pdf.PdfPages("receptor_expressions.pdf");
+
 # loop thorugh each receptor type
 for x, receptor_t in enumerate(receptors):
     
@@ -44,8 +47,10 @@ for x, receptor_t in enumerate(receptors):
     #loop through subunits within each receptor type
     for a, sub_a in enumerate(receptor_type[0]):
         #call function to extract mrna data within each region
-        extract_mrna(a,sub_a,receptor_region_data, region_mask)
+        receptor_region_data[:,a] = extract_mrna(sub_a, region_mask)
     
-    #function to make violin plots and save as PDF's
-    make_violin(receptor_region_data , receptor_type, receptor_t)
-  
+    #function to make violin plots per receptor and saves all as one pdf
+    make_violin(receptor_region_data, receptor_type, receptor_t)
+    out_pdf.savefig()
+    
+out_pdf.close()

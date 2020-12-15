@@ -9,7 +9,7 @@ import glob
 import nibabel as ni
 data_dir = 'E://Taiwan/Inspectro-Gadget/'
 
-def extract_mrna(index, subunit, data, region_mask):
+def extract_mrna(subunit, region_mask):
     subunit_path = glob.glob(os.path.join(data_dir,'mRNA_Expression_data',subunit,'*_mirr_mRNA.nii'))
     mrna = ni.load(subunit_path[0]).get_fdata()
     #finding max value for whole brain to normalise data once region has been extracted
@@ -19,4 +19,4 @@ def extract_mrna(index, subunit, data, region_mask):
     #normalising region mrna values by whole brain receptors
     region_norm = region/mrna_max
     #array for all normalised values for all GABAa subunits
-    data[:,index] = region_norm
+    return region_norm
