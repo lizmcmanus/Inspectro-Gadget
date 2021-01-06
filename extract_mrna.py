@@ -10,8 +10,8 @@ import nibabel as ni
 data_dir = 'E://Taiwan/Inspectro-Gadget/'
 
 def extract_mrna(subunit, region_mask):
-    subunit_path = glob.glob(os.path.join(data_dir,'mRNA_Expression_data',subunit,'*_mirr_mRNA.nii'))
-    mrna = ni.load(subunit_path[0]).get_fdata()
+    subunit_path = os.path.join(data_dir,'mRNA_images',subunit+'_mirr_mRNA.nii.gz')
+    mrna = ni.load(subunit_path).get_fdata()
     #finding max value for whole brain to normalise data once region has been extracted
     mrna_max = mrna.max()
     #Indexing each expression by the mask- shows only the receptor expression within the MRS ROI
