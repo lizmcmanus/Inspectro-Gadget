@@ -6,13 +6,12 @@ Created on Fri Dec 11 20:32:00 2020
 """
 import seaborn as sns
 import pandas as pd
-import matplotlib.pyplot as plt
+import numpy as np
 
-def make_violin(data, name, receptor):
-    plt.clf();
+
+def make_violin(data, name, receptor, fig):
     n=len(name[0])
     subunits=name[0]
-    x=list(range(0,n))
     df = pd.DataFrame(data) 
     #label columns with subunit names   
     df.columns = [name[0]]
@@ -22,9 +21,7 @@ def make_violin(data, name, receptor):
     
     # Violin plots of each subunit per receptor
     sns.set_theme(style="whitegrid")
-    receptor_plot = sns.violinplot(data=df_missing_removed, inner = "box")
-    plt.title(receptor)
-    plt.ylabel("Normalised mRNA Expression Value")
-    plt.xticks(x,subunits)
-    plt.xticks(fontsize=7, rotation = 45) 
-    
+    sns.violinplot(data=df_missing_removed, inner = "box", ax=fig)
+    fig.set_title(receptor, fontsize=15)
+    fig.set_xticks(np.arange(0, n))
+    fig.set_xticklabels(subunits, fontsize=10, rotation = 45)

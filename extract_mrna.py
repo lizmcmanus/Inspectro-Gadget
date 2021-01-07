@@ -5,7 +5,6 @@ Created on Fri Dec 11 15:13:59 2020
 @author: lizmc
 """
 import os
-import glob
 import nibabel as ni
 data_dir = 'E://Taiwan/Inspectro-Gadget/'
 
