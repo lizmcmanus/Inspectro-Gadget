@@ -14,6 +14,7 @@ import pandas as pd
 import nibabel as ni
 from extract_mrna import extract_mrna
 from make_violin import make_violin
+from excitation_inhibition import ex_in
 import matplotlib.backends.backend_pdf as pdf
 import matplotlib.pyplot as plt
 import sys
@@ -40,7 +41,7 @@ for argi in range (1, len(sys.argv)):
     
     #creating blank figure for subunit subplots
     out_pdf = pdf.PdfPages(mask_filename+"_receptor_expressions.pdf");
-    fig,axs = plt.subplots(nrows=3, ncols=2,sharex=False,sharey=False, figsize=(24, 24))
+    fig,axs = plt.subplots(nrows=3, ncols=2,sharex=False,sharey=False, figsize=(26, 30))
     plt.tick_params(bottom=False, top=False, left=False, right=False)
     fig.text(0.08, 0.5, 'Normalised mRNA Expression Value', va='center', ha='center', rotation='vertical', fontsize=25)
     x=0
@@ -48,6 +49,8 @@ for argi in range (1, len(sys.argv)):
     
     #variable to hold all subunits data
     all_subunit_data = {} 
+    #variable for excitation inhibition scores per region
+    ExIn = {}
     
     # loop thorugh each receptor type
     for i, receptor_t in enumerate(receptors):
@@ -70,8 +73,18 @@ for argi in range (1, len(sys.argv)):
         if x > 1: 
             y=y+1
             x=0
+            
+    #calculating excitation inhibition scores for each MRS region
+    ExIn = ex_in(all_subunit_data)
+    #adding ratio to the bottom of the figure
+    fig.text(0.5, 0.07, 'Regional Excitation/Inhibition Ratio = {0}'.format(ExIn), va='center', ha='center', fontsize=32)
+    
     #saving pdf and dataframes for each mask files receptor data        
     all_region_data[mask_filename]=all_subunit_data 
     out_pdf.savefig()   
     out_pdf.close()
     
+  
+   
+ 
+ 

@@ -22,6 +22,8 @@ def make_violin(data, name, receptor, fig):
     # Violin plots of each subunit per receptor
     sns.set_theme(style="whitegrid")
     sns.violinplot(data=df_missing_removed, inner = "box", ax=fig)
-    fig.set_title(receptor, fontsize=15)
+    fig.set_title(receptor, fontsize=22)
     fig.set_xticks(np.arange(0, n))
-    fig.set_xticklabels(subunits, fontsize=10, rotation = 45)
+    fig.set_xticklabels(subunits, fontsize=14, rotation = 45)
+    fig.tick_params(axis='y', which='major', labelsize=14)
+
