@@ -15,9 +15,11 @@ import nibabel as ni
 from extract_mrna import extract_mrna
 from make_violin import make_violin
 from excitation_inhibition import ex_in
+from stats_compare import stats_compare
 import matplotlib.backends.backend_pdf as pdf
 import matplotlib.pyplot as plt
 import sys
+
 
 # Project directory
 data_dir = 'E://Taiwan/Inspectro-Gadget/'
@@ -26,9 +28,11 @@ data_dir = 'E://Taiwan/Inspectro-Gadget/'
 output_dir = os.path.join(data_dir,'expression')
 #variable for all masks and receptors
 all_region_data = {}
+
+masks = sys.argv[1:]
 # Loop through arguments for MRS regions
-for argi in range (1, len(sys.argv)):
-    mask_filename = sys.argv[argi]
+for mask in masks:
+    mask_filename = mask
     # Load MRS region
     region_mask = ni.load(os.path.join(data_dir, mask_filename)).get_fdata()
     mask_size = region_mask[region_mask==1]
@@ -84,6 +88,8 @@ for argi in range (1, len(sys.argv)):
     out_pdf.savefig()   
     out_pdf.close()
     
+#stats to compare subunit distributions n=between regions
+stats = stats_compare(all_region_data, receptors, receptors_list, masks)
   
    
  
