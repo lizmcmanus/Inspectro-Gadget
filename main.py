@@ -81,16 +81,17 @@ for mask in masks:
     #calculating excitation inhibition scores for each MRS region
     ExIn = ex_in(all_subunit_data)
     #adding ratio to the bottom of the figure
-    fig.text(0.5, 0.07, 'Regional Excitation/Inhibition Ratio = {0}'.format(ExIn), va='center', ha='center', fontsize=32)
+    fig.text(0.5, 0.07, 'Regional Excitation/Inhibition Ratio = {:.3f}'.format(ExIn), va='center', ha='center', fontsize=32)
     
     #saving pdf and dataframes for each mask files receptor data        
     all_region_data[mask_filename]=all_subunit_data 
     out_pdf.savefig()   
     out_pdf.close()
     
+mask_names = [m.replace('.nii.gz', '') for m in masks]    
 #stats to compare subunit distributions n=between regions
-stats = stats_compare(all_region_data, receptors, receptors_list, masks)
-  
+stats_out = stats_compare(all_region_data, receptors, receptors_list, mask_names)
+
    
  
  
