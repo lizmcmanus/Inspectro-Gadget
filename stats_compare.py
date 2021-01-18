@@ -72,7 +72,7 @@ def stats_compare(data, receptors, subunits, masks):
         fvals = fvals.T
         subunit_outputs = pd.concat([fvals, orig_pvals, new_pvals]) 
         subunit_outputs.columns = [r_sub[0]]   
-        subunit_outputs.index = ['F','p', 'FDR p']
+        subunit_outputs.index = ['F','p', 'Adjusted p']
 
         alldata_reorder[r]=compare_data
         alldata_outputs[r]=subunit_outputs
@@ -97,7 +97,7 @@ def stats_compare(data, receptors, subunits, masks):
         
         for row in range(0, len(tmp)):
             cell_text.append(['%1.4f' % (value) for value in tmp[row,:]])
-        rows = ['F','p', 'FDR p']
+        rows = ['F','p', 'Adjusted p']
         columns = ['%s' % (unit) for unit in r_sub[0]]
         the_table = plot.table(cellText=cell_text, 
                   rowLabels=rows, 
