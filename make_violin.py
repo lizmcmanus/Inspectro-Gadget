@@ -20,7 +20,7 @@ def make_violin(data, name, receptor, fig):
     df_missing_removed = df[(df != 0).all(1)]
     
     # Violin plots of each subunit per receptor
-    sns.set_theme(style="whitegrid")
+   # sns.set_theme(style="whitegrid")
     sns.violinplot(data=df_missing_removed, inner = "box", ax=fig)
     fig.set_title(receptor, fontsize=22)
     fig.set_xticks(np.arange(0, n))
