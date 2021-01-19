@@ -79,6 +79,8 @@ def stats_compare(data, receptors, subunits, masks):
         
         #remove 0's and make violin plots
         df_removed = compare_data[(compare_data != 0).all(1)]
+        
+        sns.set_palette("hls", 8)
         plot = sns.violinplot(x="subunit", y="value", hue="mask", data=df_removed, ax=axs[b,a])
         plot.set_title(r, fontsize=26)
         plot.tick_params(axis='both', which='both', labelsize=18)
