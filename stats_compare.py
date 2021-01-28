@@ -36,13 +36,14 @@ def stats_compare(data, receptors, subunits, mask_names,n_samples=10000):
     #subunits list for the current receptor
         r_sub = subunits.loc[subunits[1] == r]
         aov_table = {}
-        pvals = []
+
         dvals = []
         dcis = []
         pctDifs = []
 
         compare_data = pd.DataFrame(columns=['value','mask','subunit'])
 
+        alpha = 0.05/len(r_sub)
         #loop subunits
         for x, sub in enumerate(r_sub[0]):
             print(f'{r} - {sub}')
@@ -50,10 +51,13 @@ def stats_compare(data, receptors, subunits, mask_names,n_samples=10000):
             mask1_data = data[mask_names[0]][r][:,x]
             mask2_data = data[mask_names[1]][r][:,x]
 
-            # Compare subunit values
-            pctDif,D,Dci,p = bootstrap_diff(mask1_data,mask2_data,n_samples=n_samples)
+            # Remove zeros
+            mask1_data = mask1_data[mask1_data != 0]
+            mask2_data = mask2_data[mask2_data != 0]
 
-            pvals.append(p)
+            # Compare subunit values
+            pctDif,D,Dci = bootstrap_diff(mask1_data,mask2_data,n_samples=n_samples,alpha=alpha)
+
             dvals.append(D)
             dcis.append(Dci)
             pctDifs.append(pctDif)
@@ -198,7 +202,7 @@ def perm_median(g1,g2):
     np.random.shuffle(comb_gs)
     return(np.median(comb_gs[:len1])-np.median(comb_gs[len1:]))
 
-def bootstrap_diff(g1,g2,n_samples=10000):
+def bootstrap_diff(g1,g2,n_samples=10000,alpha=0.05):
     """
     Run robust comparison of two independent samples.
 
@@ -215,11 +219,11 @@ def bootstrap_diff(g1,g2,n_samples=10000):
             p-value
 
     """
-    D,Dci = cohens_d(g1,g2)
+    D,Dci = cohens_d(g1,g2,alpha=alpha)
     g1_mad = mad_median(g1)
     g2_mad = mad_median(g2)
     mDif = np.median(g1_mad)-np.median(g2_mad)
     pctDif = mDif/np.median(g2_mad)*100
     mPerm = np.array(Parallel(n_jobs=-2,verbose=0)(delayed(perm_median)(g1_mad,g2_mad)for i in range(n_samples)))
-    p = len(np.where(np.abs(mPerm)>=np.abs(mDif))[0])/float(n_samples)
-    return(pctDif,D,Dci,p)
+    # p = len(np.where(np.abs(mPerm)>=np.abs(mDif))[0])/float(n_samples)
+    return(pctDif,D,Dci)
