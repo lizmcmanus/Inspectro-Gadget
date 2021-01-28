@@ -4,18 +4,18 @@ Created on Fri Jan 15 11:57:08 2021
 
 @author: lizmc
 """
+
 import numpy as np
 import pandas as pd
-import statsmodels.api as sm
-from statsmodels.formula.api import ols
 import seaborn as sns
-from scipy.stats import rankdata
 import matplotlib.backends.backend_pdf as pdf
 import matplotlib.pyplot as plt
 import statsmodels.stats.multitest as multi
 from matplotlib.ticker import AutoMinorLocator
+from scipy.stats import trim_mean, norm, mstats
+from joblib import Parallel, delayed
 
-def stats_compare(data, receptors, subunits, masks):
+def stats_compare(data, receptors, subunits, masks,n_samples=10000):
 
     alldata_outputs = {}
     alldata_reorder = {}
@@ -35,31 +35,26 @@ def stats_compare(data, receptors, subunits, masks):
         r_sub = subunits.loc[subunits[1] == r]
         aov_table = {}
         pvals = []
-        fvals = []
+        dvals = []
+        dcis = []
+        pctDifs = []
 
         compare_data = pd.DataFrame(columns=['value','mask','subunit'])
 
         #loop subunits
         for x, sub in enumerate(r_sub[0]):
+            # Get data for each mask
+            mask1_data = data[masks[0]][r][:,x]
+            mask2_data = data[masks[1]][r][:,x]
 
+            # Compare subunit values
+            pctDif,D,Dci,p = bootstrap_diff(g1,g2,n_samples=n_samples)
 
-            #loop masks
-            for z, m in enumerate(masks):
-                #restructuring data to compare subunits between masks
-                data_col = pd.DataFrame(data[m][r][:,x])
-                data_col.columns = ['value']
-                data_col['mask'] = m
-                #subunit data for one mask
-                data_col['subunit'] = sub
-                #subunit data for all masks
-                compare_data = pd.concat([compare_data,data_col])
+            pvals.append(p)
+            dvals.append(D)
+            dcis.append(Dci)
+            pctDifs.append(pctDif)
 
-
-            #one way anovas compare each subunits for all masks
-            model = ols('value ~ C(mask)', data=compare_data).fit()
-            aov_table[sub] = sm.stats.anova_lm(model, typ=2)
-            pvals.append(aov_table[sub]['PR(>F)']['C(mask)'])
-            fvals.append(aov_table[sub]['F']['C(mask)'])
 
         #corrections for multiple comparisons
         pvals_numpy = np.array(pvals).T
@@ -108,17 +103,13 @@ def stats_compare(data, receptors, subunits, masks):
         the_table.set_fontsize(16)
         the_table.scale(1,2)
 
-
-
-        a=a+1
+        a =+ 1
         if a > 1:
-            b=b+1
-            a=0
+            b =+ 1
+            a = 0
 
     out_pdf.savefig()
     out_pdf.close()
-
-
 
     return  subunit_outputs
 
@@ -217,7 +208,7 @@ def bootstrap_diff(g1,g2,n_samples=10000):
 
 
     g1: First group data
-    g2: Second group data 
+    g2: Second group data
 
     return: percentage difference, Cohen's d, Cohens's d confidence interval,
             p-value
