@@ -32,7 +32,6 @@ def stats_compare(data, receptors, subunits, mask_names,n_samples=10000):
 
     #loop through receptors
     for i, r in enumerate(receptors):
-        print(f'{r}')
 
     #subunits list for the current receptor
         r_sub = subunits.loc[subunits[1] == r]
@@ -46,6 +45,7 @@ def stats_compare(data, receptors, subunits, mask_names,n_samples=10000):
 
         #loop subunits
         for x, sub in enumerate(r_sub[0]):
+            print(f'{r} - {sub}')
             # Get data for each mask
             mask1_data = data[mask_names[0]][r][:,x]
             mask2_data = data[mask_names[1]][r][:,x]
@@ -62,15 +62,12 @@ def stats_compare(data, receptors, subunits, mask_names,n_samples=10000):
         #corrections for multiple comparisons
         pvals_numpy = np.array(pvals).T
         corrected_pvals = multi.multipletests(pvals_numpy, alpha=0.05, method='bonferroni')
-        orig_pvals = pd.DataFrame(pvals)
-        orig_pvals = orig_pvals.T
-        new_pvals = pd.DataFrame(corrected_pvals[1])
-        new_pvals = new_pvals.T
-        fvals = pd.DataFrame(fvals)
-        fvals = fvals.T
-        subunit_outputs = pd.concat([fvals, orig_pvals, new_pvals])
+        orig_pvals = pd.DataFrame(pvals).T
+        new_pvals = pd.DataFrame(corrected_pvals[1]).T
+        dvals = pd.DataFrame(dvals).T
+        subunit_outputs = pd.concat([dvals, orig_pvals, new_pvals])
         subunit_outputs.columns = [r_sub[0]]
-        subunit_outputs.index = ['F','p', 'Adjusted p']
+        subunit_outputs.index = ['d','p', 'Adjusted p']
 
         alldata_reorder[r]=compare_data
         alldata_outputs[r]=subunit_outputs
@@ -97,7 +94,7 @@ def stats_compare(data, receptors, subunits, mask_names,n_samples=10000):
 
         for row in range(0, len(tmp)):
             cell_text.append(['%1.4f' % (value) for value in tmp[row,:]])
-        rows = ['F','p', 'Adjusted p']
+        rows = ['d','p', 'Adjusted p']
         columns = ['%s' % (unit) for unit in r_sub[0]]
         the_table = plot.table(cellText=cell_text,
                   rowLabels=rows,
@@ -118,15 +115,16 @@ def stats_compare(data, receptors, subunits, mask_names,n_samples=10000):
 
 def calc_cohend(g1,g2):
     """
-    Calculate Cohen's d for a comparison of two idependent groups.
+    Calculate Cohen's d for a comparison of two dependent groups.
 
     g1: First group data
     g2: Second group data
 
     """
-    m1 = trim_mean(g1,0.1)
-    m2 = trim_mean(g2,0.1)
-    sd = np.sqrt((((len(g1)-1)*np.std(mstats.winsorize(g1,limits=(0.1,0.1)))**2)+((len(g2)-1)*np.std(mstats.winsorize(g2,limits=(0.1,0.1)))**2))/(len(g1+len(g2)-2)))
+    m1 = np.mean(g1)
+    m2 = np.mean(g2)
+    sd = np.std(g1)+np.std(g2)/2
+    #sd = np.std(mstats.winsorize(g1,limits=(0.1,0.1)))+np.std(mstats.winsorize(g2,limits=(0.1,0.1)))/2
     return((m1-m2)/sd)
 
 def get_boot_d(g1,g2):
@@ -157,7 +155,7 @@ def get_jack_d(g1,g2,i):
 def cohens_d(g1,g2,n_samples=10000,alpha=0.05):
     """
     Calculate Cohen's d plus adjusted confidence interval for a comparison
-    of two independent groups.
+    of two dependent groups.
 
     g1: First group data
     g2: Second group data
@@ -205,9 +203,9 @@ def bootstrap_diff(g1,g2,n_samples=10000):
     Run robust comparison of two independent samples.
 
     Removes outliers based on median absolute deviation. Tests significance of
-    difference in medians via permutation test. Calculates robust Cohen's d
-    (20% trimmed mean & 20% Winsorized variance) plus confidence interval of this.
-    Returns these plus percentage difference between samples.
+    difference in medians via permutation test. Calculates Cohen's d plus
+    confidence interval of this. Returns these plus percentage difference between
+    samples.
 
 
     g1: First group data
@@ -223,5 +221,5 @@ def bootstrap_diff(g1,g2,n_samples=10000):
     mDif = np.median(g1_mad)-np.median(g2_mad)
     pctDif = mDif/np.median(g2_mad)*100
     mPerm = np.array(Parallel(n_jobs=-2,verbose=0)(delayed(perm_median)(g1_mad,g2_mad)for i in range(n_samples)))
-    p = len(np.where(np.abs(mPerm)>=np.abs(mDif))[0])/n_samples
+    p = len(np.where(np.abs(mPerm)>=np.abs(mDif))[0])/float(n_samples)
     return(pctDif,D,Dci,p)
