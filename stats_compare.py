@@ -15,7 +15,8 @@ from matplotlib.ticker import AutoMinorLocator
 from scipy.stats import trim_mean, norm, mstats
 from joblib import Parallel, delayed
 
-def stats_compare(data, receptors, subunits, masks,n_samples=10000):
+def stats_compare(data, receptors, subunits, mask_names,n_samples=10000):
+    print('Running region comparisons for:')
 
     alldata_outputs = {}
     alldata_reorder = {}
@@ -31,6 +32,8 @@ def stats_compare(data, receptors, subunits, masks,n_samples=10000):
 
     #loop through receptors
     for i, r in enumerate(receptors):
+        print(f'{r}')
+
     #subunits list for the current receptor
         r_sub = subunits.loc[subunits[1] == r]
         aov_table = {}
@@ -44,8 +47,8 @@ def stats_compare(data, receptors, subunits, masks,n_samples=10000):
         #loop subunits
         for x, sub in enumerate(r_sub[0]):
             # Get data for each mask
-            mask1_data = data[masks[0]][r][:,x]
-            mask2_data = data[masks[1]][r][:,x]
+            mask1_data = data[mask_names[0]][r][:,x]
+            mask2_data = data[mask_names[1]][r][:,x]
 
             # Compare subunit values
             pctDif,D,Dci,p = bootstrap_diff(mask1_data,mask2_data,n_samples=n_samples)
@@ -220,5 +223,5 @@ def bootstrap_diff(g1,g2,n_samples=10000):
     mDif = np.median(g1_mad)-np.median(g2_mad)
     pctDif = mDif/np.median(g2_mad)*100
     mPerm = np.array(Parallel(n_jobs=-2,verbose=0)(delayed(perm_median)(g1_mad,g2_mad)for i in range(n_samples)))
-    p = np.where(np.abs(mPerm)>=np.abs(mDif))[0].shape[0]/n_samples
+    p = len(np.where(np.abs(mPerm)>=np.abs(mDif))[0])/n_samples
     return(pctDif,D,Dci,p)

@@ -9,16 +9,16 @@ Arguments need to be given for region mask names when using command line
 GABA and Glutamate regions must ine in a .tsv file "receptors.tsv"
 """
 import os
+import sys
 import numpy as np
 import pandas as pd
 import nibabel as ni
+import matplotlib.backends.backend_pdf as pdf
+import matplotlib.pyplot as plt
 from extract_mrna import extract_mrna
 from make_violin import make_violin
 from excitation_inhibition import ex_in
 from stats_compare import stats_compare
-import matplotlib.backends.backend_pdf as pdf
-import matplotlib.pyplot as plt
-import sys
 
 
 # Project directory
@@ -49,8 +49,8 @@ for mask in masks:
     fig,axs = plt.subplots(nrows=3, ncols=2,sharex=False,sharey=False, figsize=(26, 30))
     plt.tick_params(bottom=False, top=False, left=False, right=False)
     fig.text(0.08, 0.5, 'Normalised mRNA Expression Value', va='center', ha='center', rotation='vertical', fontsize=25)
-    x=0
-    y=0
+    x = 0
+    y = 0
 
     #variable to hold all subunits data
     all_subunit_data = {}
@@ -75,10 +75,10 @@ for mask in masks:
 
         #function to make violin plots per receptor and saves all as one pdf
         make_violin(receptor_region_data, receptor_type, receptor_t, axs[y,x])
-        x=x+1
+        x =+ 1
         if x > 1:
-            y=y+1
-            x=0
+            y =+ 1
+            x = 0
 
     #calculating excitation inhibition scores for each MRS region
     ExIn = ex_in(all_subunit_data)
