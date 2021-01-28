@@ -48,7 +48,7 @@ def stats_compare(data, receptors, subunits, masks,n_samples=10000):
             mask2_data = data[masks[1]][r][:,x]
 
             # Compare subunit values
-            pctDif,D,Dci,p = bootstrap_diff(g1,g2,n_samples=n_samples)
+            pctDif,D,Dci,p = bootstrap_diff(mask1_data,mask2_data,n_samples=n_samples)
 
             pvals.append(p)
             dvals.append(D)
