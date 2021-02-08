@@ -38,7 +38,8 @@ def stats_compare(data, receptors, subunits, mask_names,n_samples=10000):
         aov_table = {}
 
         dvals = []
-        dcis = []
+        dcis_up = []
+        dcis_low = []
         pctDifs = []
 
         compare_data = pd.DataFrame(columns=['value','mask','subunit'])
@@ -52,26 +53,30 @@ def stats_compare(data, receptors, subunits, mask_names,n_samples=10000):
             mask2_data = data[mask_names[1]][r][:,x]
 
             # Remove zeros
+            # Do we want to do this though? The zeros skew the distribution so
+            # outliers of non-zero voxels may not be picked up but at the same
+            # time the zeros are data points from the voxel
             mask1_data = mask1_data[mask1_data != 0]
             mask2_data = mask2_data[mask2_data != 0]
 
             # Compare subunit values
-            pctDif,D,Dci = bootstrap_diff(mask1_data,mask2_data,n_samples=n_samples,alpha=alpha)
+            pctDif,D,Dci_low,Dci_up = bootstrap_diff(mask1_data,mask2_data,n_samples=n_samples,alpha=alpha)
 
             dvals.append(D)
-            dcis.append(Dci)
+            dcis_up.append(Dci_up)
+            dcis_low.append(dcis_low)
             pctDifs.append(pctDif)
 
 
         #corrections for multiple comparisons
-        pvals_numpy = np.array(pvals).T
-        corrected_pvals = multi.multipletests(pvals_numpy, alpha=0.05, method='bonferroni')
-        orig_pvals = pd.DataFrame(pvals).T
-        new_pvals = pd.DataFrame(corrected_pvals[1]).T
+        # pvals_numpy = np.array(pvals).T
+        # corrected_pvals = multi.multipletests(pvals_numpy, alpha=0.05, method='bonferroni')
+        # orig_pvals = pd.DataFrame(pvals).T
+        # new_pvals = pd.DataFrame(corrected_pvals[1]).T
         dvals = pd.DataFrame(dvals).T
-        subunit_outputs = pd.concat([dvals, orig_pvals, new_pvals])
+        subunit_outputs = pd.concat([pctDifs, dvals, dcis_low, dcis_up])
         subunit_outputs.columns = [r_sub[0]]
-        subunit_outputs.index = ['d','p', 'Adjusted p']
+        subunit_outputs.index = ['pct','d', 'dCI_low','dCI_up']
 
         alldata_reorder[r]=compare_data
         alldata_outputs[r]=subunit_outputs
@@ -96,9 +101,11 @@ def stats_compare(data, receptors, subunits, mask_names,n_samples=10000):
         cell_text = []
         tmp = alldata_outputs[r].to_numpy()
 
-        for row in range(0, len(tmp)):
-            cell_text.append(['%1.4f' % (value) for value in tmp[row,:]])
-        rows = ['d','p', 'Adjusted p']
+        cell_text[[f'{}']]
+
+        # for row in range(0, len(tmp)):
+        #     cell_text.append(['%1.4f' % (value) for value in tmp[row,:]])
+        rows = ['% difference','d', 'd 95% CI']
         columns = ['%s' % (unit) for unit in r_sub[0]]
         the_table = plot.table(cellText=cell_text,
                   rowLabels=rows,
@@ -226,4 +233,4 @@ def bootstrap_diff(g1,g2,n_samples=10000,alpha=0.05):
     pctDif = mDif/np.median(g2_mad)*100
     mPerm = np.array(Parallel(n_jobs=-2,verbose=0)(delayed(perm_median)(g1_mad,g2_mad)for i in range(n_samples)))
     # p = len(np.where(np.abs(mPerm)>=np.abs(mDif))[0])/float(n_samples)
-    return(pctDif,D,Dci)
+    return(pctDif,D,Dci[0],Dci[1])
