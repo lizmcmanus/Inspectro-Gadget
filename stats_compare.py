@@ -119,7 +119,7 @@ def stats_compare(data, receptors, subunits, mask_names,n_samples=10000):
 
         #adding table below figures
         cell_text = []
-        tmp = alldata_outputs[r].to_numpy()
+        tmp = subunit_outputs.to_numpy()
 
         #cell_text[[f'{r}']] ###WTF does this do?!
 
