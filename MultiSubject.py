@@ -18,6 +18,7 @@ from extract_mrna import extract_mrna
 from ex_in_multi import ex_in_multi
 from make_radar import make_radar
 from make_violin import make_violin
+import textwrap as twp
 
 # Project directory
 #data_dir = 'E://Taiwan/Inspectro-Gadget/'
@@ -74,7 +75,7 @@ for m, mask in enumerate(subjects[0]):
      #removed all 0 values (that aren't actually 0's due to sigmoid normalisation) 
         col = subject_subtype_data[:,f]
         col_rem = col[col > 0.1]
-        col_df[subtype] = pd.DataFrame(col_rem)
+        col_df[subtype] = col_rem
         #col_df.rename(columns=subtype)
         recep_removed = pd.concat([recep_removed, col_df], axis=1)
        # recep_array= np.array(recep_removed)
@@ -116,8 +117,8 @@ radar_pdf.close()
   #out_pdf = pdf.PdfPages(mask_filename+"_receptor_expressions.pdf");
 fig,axs = plt.subplots(nrows=2, ncols=3, sharex=False,sharey=False, figsize=(10, 7), linewidth=0.01)
 plt.tick_params(bottom=False, top=False, left=False, right=False)
-fig.text(0.015, 0.5, 'Normalised mRNA Expression Value', va='center', ha='center', rotation='vertical', fontsize=12)
-fig.tight_layout(pad=4.0)
+fig.text(0.015, 0.5, 'Normalised mRNA Expression Value', va='center', ha='center', rotation='vertical', fontsize=8)
+fig.tight_layout(pad = 4.0)
 x = 0
 y = 0
 
@@ -144,19 +145,20 @@ for re, GABAGlu_recep in enumerate(GABA_Glu[0]):
     sub_mean = recep_withmean.mean(axis=0)
     
     #calcuating distance from mean for each subject
-    dfm = pd.DataFrame(sub_mean - sub_mean['Mean'])
-    dfm_t = dfm.transpose()
+    dfm = pd.DataFrame(sub_mean - sub_mean['Mean',])
+    dfm_t = dfm.T
     dfm_t = np.array (dfm_t) ####### THIS IS STUPIDLY INELEGANT, BUT IT'S THE ONLY WAY I COULD GET THE DAMN ARRAY TO TRANSPOSE
     dfm_t = np.round(dfm_t, 2)
 
-    
+    row_lab = [twp.fill('distance from mean', 10)]
     columns = sub_id_mean[0]
     sub_table = plot.table(cellText=dfm_t,
-          rowLabels=['distance from mean'],
+          rowLabels= row_lab,
+          ####height = 2,
           colLabels=columns,
           loc='bottom')
     sub_table.set_fontsize(6)  
-###### SHRINK THE ROW LABEL SOMEHOW!!!
+
 
     x += 1
     if x > 2:
@@ -183,15 +185,17 @@ for ei, mask_ei in enumerate(subjects[0]):
 
 #plotting e/i ratio's in table and saving as pdf
 ExIn_all = np.round(ExIn_all, 3)
+title = [twp.fill('Excitation/Inhibition Ratio', 22)]
 fig, ax = plt.subplots() 
 ax.set_axis_off()
 cols = sub_id[0] 
 table = ax.table( 
     cellText = ExIn_all,  
-    rowLabels = ['Excitation/Inhibition Ratio'],  
+    rowLabels = title,
     colLabels = cols,  
-    loc ='center')     #still having trouble with massive row label!    
-ax.set_title('Multi-Subjet Excitation/Inhibition Ratio''s', fontweight ="bold")
+    loc ='center')     
+fig.tight_layout(pad = 4.0)#still having trouble with massive row label!    
+ax.set_title('Multi-Subjet Excitation/Inhibition Ratio''s', fontweight ="bold", loc="centre")
    
 ExIn_pdf.savefig()
 ExIn_pdf.close()
