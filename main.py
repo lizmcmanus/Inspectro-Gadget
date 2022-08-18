@@ -18,6 +18,8 @@ from extract_mrna import extract_mrna
 from make_violin import make_violin
 from excitation_inhibition import ex_in
 from stats_compare import stats_compare
+from make_radar import make_radar
+
 
 
 # Project directory
@@ -39,13 +41,13 @@ for mask in masks:
     mask_size = len(mask_size)
     mask_filename = mask_filename.replace(".nii.gz","")
     # Load in the list of receptors and subunits
-    receptors_list = pd.read_csv(os.path.join(data_dir,'receptors.tsv'), delimiter='\t', header=None)
+    receptors_list = pd.read_csv(os.path.join(data_dir,'GroupedReceptors.tsv'), delimiter='\t', header=None)
     #extract unique receptors
     receptors = receptors_list[1].unique()
 
     #creating blank figure for subunit subplots
     out_pdf = pdf.PdfPages(mask_filename+"_receptor_expressions.pdf");
-    fig,axs = plt.subplots(nrows=3, ncols=2,sharex=False,sharey=False, figsize=(26, 30))
+    fig,axs = plt.subplots(nrows=5, ncols=3,sharex=False,sharey=False, figsize=(25, 45))
     plt.tick_params(bottom=False, top=False, left=False, right=False)
     fig.text(0.08, 0.5, 'Normalised mRNA Expression Value', va='center', ha='center', rotation='vertical', fontsize=25)
     x = 0
@@ -54,6 +56,7 @@ for mask in masks:
     #variable to hold all subunits data
     all_subunit_data = {}
     #variable for excitation inhibition scores per region
+    
     ExIn = {}
 
     # loop thorugh each receptor type
@@ -66,7 +69,7 @@ for mask in masks:
         #loop through subunits within each receptor type
         for a, sub_a in enumerate(receptor_type[0]):
             #call function to extract mrna data within each region
-            subunit_path = os.path.join(data_dir,'mRNA_images',sub_a+'_mirr_mRNA.nii.gz')
+            subunit_path = os.path.join(data_dir,'mRNA_images',sub_a+'_mirr_mRNA.nii')
             receptor_region_data[:,a] = extract_mrna(subunit_path, region_mask)
 
         #all subunits for each receptor type stored in this variable
@@ -75,20 +78,31 @@ for mask in masks:
         #function to make violin plots per receptor and saves all as one pdf
         make_violin(receptor_region_data, receptor_type, receptor_t, axs[y,x])
         x += 1
-        if x > 1:
+        if x > 2:
             y += 1
             x = 0
+            
+        if y > 1:
+            y = 0
+            out_pdf.savefig()
+            
+        
 
     #calculating excitation inhibition scores for each MRS region
-    ExIn = ex_in(all_subunit_data)
+    #ExIn = ex_in(all_subunit_data)
     #adding ratio to the bottom of the figure
-    fig.text(0.5, 0.07, 'Regional Excitation/Inhibition Ratio = {:.2f}'.format(ExIn), va='center', ha='center', fontsize=32)
+    #fig.text(0.5, 0.07, 'Regional Excitation/Inhibition Ratio = {:.2f}'.format(ExIn), va='center', ha='center', fontsize=32)
 
     #saving pdf and dataframes for each mask files receptor data
     all_region_data[mask_filename]=all_subunit_data
     out_pdf.savefig()
     out_pdf.close()
-
+    
+ 
 mask_names = [m.replace('.nii.gz', '') for m in masks]
 #stats to compare subunit distributions n=between regions
 stats_out = stats_compare(all_region_data, receptors, receptors_list, mask_names)
+
+
+
+
