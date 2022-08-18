@@ -1,24 +1,6 @@
 [build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
-
-[project]
-name = "inspectro_gadget"
-version = "0.0.1"
-authors = [
-    { name="Liz McManus", email="liz.mcmanus93@googlemail.com"},
-    { name="Niall Duncan", email="niall.w.duncan@gmail.com"}
+requires = [
+    "setuptools>=42",
+    "wheel"
 ]
-description = "Provides information about neurotransmitter receptor related gene expression from within MRS voxels."
-readme = "README.md"
-license = { file="LICENSE" }
-requires-python = ">=3.6"
-classifiers = [
-    "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License",
-    "Operating System :: OS Independent",
-]
-
-[project.urls]
-"Homepage" = "https://github.com/lizmcmanus/Inspectro-Gadget"
-"Bug Tracker" = "https://github.com/lizmcmanus/Inspectro-Gadget/issues"
+build-backend = "setuptools.build_meta"
