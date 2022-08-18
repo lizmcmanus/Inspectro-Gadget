@@ -75,15 +75,15 @@ for mask in masks:
 
         #function to make violin plots per receptor and saves all as one pdf
         make_violin(receptor_region_data, receptor_type, receptor_t, axs[y,x])
-        x =+ 1
+        x += 1
         if x > 1:
-            y =+ 1
+            y += 1
             x = 0
 
     #calculating excitation inhibition scores for each MRS region
     ExIn = ex_in(all_subunit_data)
     #adding ratio to the bottom of the figure
-    fig.text(0.5, 0.07, 'Regional Excitation/Inhibition Ratio = {:.3f}'.format(ExIn), va='center', ha='center', fontsize=32)
+    fig.text(0.5, 0.07, 'Regional Excitation/Inhibition Ratio = {:.2f}'.format(ExIn), va='center', ha='center', fontsize=32)
 
     #saving pdf and dataframes for each mask files receptor data
     all_region_data[mask_filename]=all_subunit_data
