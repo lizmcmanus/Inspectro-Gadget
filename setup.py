@@ -18,18 +18,18 @@ with open("requirements.txt") as requirements_file:
     install_requires = requirements_file.read().splitlines()
 
 setup(
-    name = 'scalp-distance',
-    version = __version__,
-    description = 'Find distance between brain outer edge and scalp from T1 image',
-    long_description = long_description,
-    long_description_content_type = 'text/markdown',
-    python_requires = '>=3.5',
-    author = 'Niall Duncan',
-    author_email = 'niall.w.duncan@gmail.com',
-    url = 'https://github.com/nwd2918/scalp-distance',
-    packages = find_packages(),
-    license = 'CC BY-NC-SA 4.0',
-    classifiers = [
+    name='inspectro_gadget',
+    version=__version__,
+    description='Gives information about neurotransmitter receptor related mRNA expression within MRS voxels.',
+    long_description=long_description,
+    long_description_content_type='text/markdown',
+    python_requires='>=3.5',
+    author='Liz McManus',
+    author_email='liz.mcmanus93@googlemail.com ',
+    url='https://github.com/lizmcmanus/Inspectro-Gadget',
+    packages=find_packages(),
+    license='MIT',
+    classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Science/Research',
         'Topic :: Scientific/Engineering',
@@ -43,7 +43,9 @@ setup(
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9'
     ],
-    platforms = 'any',
-    keywords = ['neuroscience', 'TMS', 'MRI'],
-    install_requires = install_requires,
+    platforms='any',
+    keywords=['neuroscience', 'spectroscopy', 'MRI', 'mRNA', 'neurotransmission'],
+    install_requires=install_requires,
+    include_package_data=True,
+    package_data={'': ['data/*.tsv', 'data/mRNA_images/*.nii.gz']},
 )
