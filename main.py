@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
-# -*- coding: utf-8 -*-
 """
 Tool to show the receptor expressions within an MRS region
 
-MRS regions masks must be (in MNI space?))
+MRS regions masks must be in MNI152 space (2 mm).
 
 Arguments need to be given for region mask names when using command line
 GABA and Glutamate regions must ine in a .tsv file "receptors.tsv"
@@ -26,7 +25,7 @@ from stats_compare import stats_compare
 data_dir = os.getcwd()
 
 # Directory for outputs
-output_dir = os.path.join(data_dir,'expression')
+output_dir = os.path.join(data_dir, 'expression')
 #variable for all masks and receptors
 all_region_data = {}
 
