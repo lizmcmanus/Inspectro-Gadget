@@ -75,7 +75,7 @@ for m, mask in enumerate(masks):
         #loop through subunits within each receptor type
         for a, sub_a in enumerate(receptor_type[0]):
             #call function to extract mrna data within each region
-            subunit_path = os.path.join(data_dir,'mRNA_images',sub_a+'_mirr_mRNA.nii')
+            subunit_path = os.path.join(data_dir, 'inspectro_gadget/data/mRNA_images', sub_a + '_mirr_mRNA.nii')
             receptor_region_data[:,a] = extract_mrna(subunit_path, region_mask)
 
         #all subunits for each receptor type stored in this variable
@@ -114,7 +114,7 @@ for m, mask in enumerate(masks):
     subtype_region_data = np.zeros([mask_size,len(subtype)])
     
     for f, sub in enumerate(subtype[0]):
-        subtype_path = os.path.join(data_dir,'mRNA_images',sub+'_mirr_mRNA.nii')
+        subtype_path = os.path.join(data_dir, 'inspectro_gadget/data/mRNA_images', sub + '_mirr_mRNA.nii')
         subtype_region_data[:,f] = extract_mrna(subtype_path, region_mask)
         #average all the subunits in each group to give 1 value per group for each voxel in the mask
         mean_data = subtype_region_data.mean(axis=0)

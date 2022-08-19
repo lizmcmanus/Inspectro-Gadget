@@ -43,7 +43,7 @@ for m, mask in enumerate(masks):
         grouped_receptor_region_data = np.zeros([mask_size,len(grouped_receptors [0])])
         
         for f, sub_grouped in enumerate(grouped_receptors[0]):
-            gr_subunit_path = os.path.join(data_dir,'mRNA_images',sub_grouped+'_mirr_mRNA.nii')
+            gr_subunit_path = os.path.join(data_dir, 'inspectro_gadget/data/mRNA_images', sub_grouped + '_mirr_mRNA.nii')
             grouped_receptor_region_data[:,f] = extract_mrna(gr_subunit_path, region_mask)
             #average all the subunits in each group to give 1 value per group for each voxel in the mask
             group_mean_data = grouped_receptor_region_data.mean(axis=1)

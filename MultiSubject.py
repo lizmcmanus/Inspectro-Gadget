@@ -68,7 +68,7 @@ for m, mask in enumerate(subjects[0]):
    
     for f, subtype in enumerate(GABA_Glu[0]):
         col_df=pd.DataFrame([])
-        subtype_path = os.path.join(data_dir,'mRNA_images',subtype+'_mirr_mRNA.nii')
+        subtype_path = os.path.join(data_dir, 'inspectro_gadget/data/mRNA_images', subtype + '_mirr_mRNA.nii')
         subject_subtype_data[:,f]= extract_mrna(subtype_path, region_mask)
      
         
@@ -91,7 +91,7 @@ for m, mask in enumerate(subjects[0]):
     allrecep_removed = pd.DataFrame([])
 ####RADAR PLOTS FOR OTHER RECEPTORS    
     for r, receptor in enumerate(receptors[0]):
-         receptors_path = os.path.join(data_dir,'mRNA_images',receptor+'_mirr_mRNA.nii')
+         receptors_path = os.path.join(data_dir, 'inspectro_gadget/data/mRNA_images', receptor + '_mirr_mRNA.nii')
          subject_receptor_data[:,r] = extract_mrna(receptors_path, region_mask)
          
          #removed all 0 values (that aren't actually 0's due to sigmoid normalisation) 

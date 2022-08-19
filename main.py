@@ -69,7 +69,7 @@ for mask in masks:
         #loop through subunits within each receptor type
         for a, sub_a in enumerate(receptor_type[0]):
             #call function to extract mrna data within each region
-            subunit_path = os.path.join(data_dir,'mRNA_images',sub_a+'_mirr_mRNA.nii')
+            subunit_path = os.path.join(data_dir, 'inspectro_gadget/data/mRNA_images', sub_a + '_mirr_mRNA.nii')
             receptor_region_data[:,a] = extract_mrna(subunit_path, region_mask)
 
         #all subunits for each receptor type stored in this variable
