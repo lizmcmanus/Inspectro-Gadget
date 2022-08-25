@@ -154,13 +154,27 @@ class GadgetData:
     """
     Attributes
     ----------
-                mask_data: list
-                A list comtaining numpy arrays of the MRS masks to work with
-                If a single mask then a list with a single 3d array;
-                if multiple masks a list of multiple 3d;
-                if subject masks a list of many strings
-            labels: list
-                Labels for the masks
+        mask_fnames: list
+            File names for voxel masks
+        labels: list
+            Labels for the masks
+        no_regions: int
+            The number of regions to be analysed
+        multi_subject: bool
+            Whether the masks are from multiple subjects or not
+        no_subjects: int
+            How many subjects are included (defaults to 1 if it's not a multi-subject analysis)
+        receptor_list: dataframe
+            Dataframe containing the list of genes to be analysed and the receptor type they are related to.
+        img_affine: array
+            Affine matrix for the MNI template
+        bground_image: array
+            Array containing the background image against which masks are to be plotted.
+        mask_images: dict
+            Dictionary containing arrays with the region masks. Keys are region labels.
+        receptor_data: dict
+            Dictionary containing the normalised mRNA expression values. Keys are region labels. Arrays within have a
+            row per voxel and column per gene. Multi-subject analyses contain separate arrays per subject in a list.
 
     Methods
     -------
@@ -207,5 +221,3 @@ class GadgetData:
                 self.mask_images[label] = load_nifti(self.mask_fnames[ll])
                 self.receptor_data[label] = get_receptor_data(self.receptor_list.iloc[:, 0].values,
                                                               self.mask_images[label], data_dir)
-
-
