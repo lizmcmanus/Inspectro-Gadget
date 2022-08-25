@@ -4,6 +4,7 @@
 Resources for handling data input, output, and organisation.
 """
 
+import nibabel as ni
 from copy import deepcopy
 
 def is_valid(var, var_type, list_type=None):
@@ -37,6 +38,56 @@ def is_valid(var, var_type, list_type=None):
 
     return var
 
+def test_nifti_ext(fname):
+    """
+    Ensure that the input filename has the expected extension for a nifti file.
+
+    Parameters
+    ----------
+    fname: string
+        The filename
+
+    """
+    # Check it's a valid filename
+    if fname[-4:] == '.nii':
+        return
+    elif fname[-7:] == '.nii.gz':
+        return
+    else:
+        raise AttributeError(f'The input file {fname} does not appear to be for a nifti image')
+
+
+def load_nifti(fname):
+    """
+    Load data from an input nifti image.
+
+    Parameters
+    ----------
+    fname: string
+        Input filename
+
+    Returns
+    -------
+    Image data as a numpy array
+
+    """
+    # Check it's a valid filename
+    test_nifti_ext(fname)
+
+    # Load image
+    img = ni.load(fname)
+
+    # Ensure image is correct size
+    if not img.shape == (91, 109, 91):
+        raise AttributeError(f'Input file {fname} does not have the correct dimensions')
+    if not tuple(img.header['pixdim'][1:4]) == (2, 2, 2):
+        raise AttributeError(f'Input file {fname} does not have the correct dimensions')
+
+    return img.get_fdata()
+
+
+
+
 class GadgetData():
     """
     Attributes
@@ -62,8 +113,8 @@ class GadgetData():
                 if subject masks a list of many strings
             labels: list
                 Labels for the masks
-            mrnas: list
-                Which mRNA to provide information about.
+
+
         """
         self.mask_data = deepcopy(mask_data)
         self.labels = deepcopy(labels)
