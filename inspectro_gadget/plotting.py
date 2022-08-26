@@ -58,6 +58,51 @@ def plot_masks(mask_imgs, labels, bground):
     return fig
 
 
+def plot_overlap(overlap, labels, bground):
+    """
+    Show the overlap between subject MRS regions on a background image.
+
+    Parameters
+    ----------
+    overlap: array
+        Numpy array containing overlap image
+    labels: list
+        List containing region name
+    bground: array
+        Numpy array containing background image
+
+    Returns
+    -------
+    Figure object
+
+    """
+    fig = plt.figure(tight_layout=True)
+    gs = gridspec.GridSpec(1, 3)
+    cmass = np.round(center_of_mass(overlap), 0).astype(int)
+    # Sagittal
+    mask_roi = np.ma.masked_where(overlap[cmass[0], :, :] == 0, overlap[cmass[0], :, :])
+    ax = fig.add_subplot(gs[0, 0])
+    ax.imshow(bground[cmass[0], :, :].T, cmap='Greys_r', origin='lower', interpolation='none')
+    ax.imshow(mask_roi.T, origin='lower', interpolation='none', alpha=0.8)
+    ax.set(yticklabels=[], xticklabels=[])  # remove the tick labels
+    ax.tick_params(left=False, bottom=False)
+    # Coronal
+    mask_roi = np.ma.masked_where(overlap[:, cmass[1], :] == 0, overlap[:, cmass[1], :])
+    ax = fig.add_subplot(gs[0, 1])
+    ax.imshow(bground[:, cmass[1], :].T, cmap='Greys_r', origin='lower', interpolation='none')
+    ax.imshow(mask_roi.T, origin='lower', interpolation='none', alpha=0.8)
+    ax.set(yticklabels=[], xticklabels=[])  # remove the tick labels
+    ax.tick_params(left=False, bottom=False)
+    ax.set_title(labels[0])
+    # Axial
+    mask_roi = np.ma.masked_where(overlap[:, :, cmass[2]] == 0, overlap[:, :, cmass[2]])
+    ax = fig.add_subplot(gs[0, 2])
+    ax.imshow(bground[:, :, cmass[2]].T, cmap='Greys_r', origin='lower', interpolation='none')
+    ax.imshow(mask_roi.T, origin='lower', interpolation='none', alpha=0.8)
+    ax.set(yticklabels=[], xticklabels=[])  # remove the tick labels
+    ax.tick_params(left=False, bottom=False)
+    return fig
+
 
 
 
