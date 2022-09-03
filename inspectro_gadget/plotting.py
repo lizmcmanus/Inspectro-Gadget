@@ -8,6 +8,7 @@ Resources for plotting MRS voxel locations and the various mRNA value plots.
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import numpy as np
+import seaborn as sb
 from scipy.ndimage import center_of_mass
 
 def plot_masks(mask_imgs, labels, bground):
@@ -104,5 +105,28 @@ def plot_overlap(overlap, labels, bground):
     return fig
 
 
+def make_violin(ax, receptors, group):
+    """
+    Create a subplot with violin plots showing receptor expression for a group of subunits.
 
+    Parameters
+    ----------
+    ax: matplotlib axis
+        The axis to add the plot to
+    receptors: dataframe
+        Dataframe with receptor expression. Column names are subunit names
+    group: string
+        The subunit grouping name for use in the title
+
+    Returns
+    -------
+    ax: matplotlib axis
+        The axis with the plots added
+    """
+    sb.violinplot(data=receptors, inner="box", ax=ax, linewidth=0.1, grid_linewidth=1)
+    ax.set_title(group, fontsize=6)
+    #ax.set_xticks(np.arange(0, n))
+    ax.tick_params(axis='x', which='major', labelsize=6, rotation=45)
+    ax.tick_params(axis='y', which='major', labelsize=6)
+    return ax
 
