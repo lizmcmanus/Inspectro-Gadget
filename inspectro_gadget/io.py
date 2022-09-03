@@ -146,12 +146,12 @@ def get_receptor_data(receptors, mask, data_dir):
     Numpy array with a column for each gene. Each row is a voxel.
 
     """
-    out = np.zeros((len(mask[mask==1]), len(receptors)))
+    out = np.zeros((len(mask[mask == 1]), len(receptors)))
     for rr, receptor in enumerate(receptors):
         out[:, rr] = extract_mrna(os.path.join(data_dir, 'mRNA_images', f'{receptor}_mirr_mRNA.nii'), mask)
     out_df = pd.DataFrame(data=out, columns=receptors)
-    # Drop voxels where there is no expression data
-    out_df = out_df.drop(out_df[out_df < 0.1].index)
+    # Set voxels where there is no expression data to "NaN"
+    out_df[out_df < 0.1] = np.nan
     return out_df
 
 
@@ -206,7 +206,7 @@ class GadgetData:
         # Load built-in data
         data_dir = '/media/storage2/Inspectro-Gadget/inspectro_gadget/data' ###### Change this!!!
         #data_dir = os.path.dirname(inspect.getfile(inspectro_gadget))
-        self.receptor_list = pd.read_csv(os.path.join(data_dir, 'GroupedReceptors.tsv'), delimiter='\t')
+        self.receptor_list = pd.read_csv(os.path.join(data_dir, 'GroupedReceptors.tsv'), delimiter='\t', header=0)
         tmp_img = ni.load(os.path.join(data_dir, 'MNI152_T1_2mm.nii.gz'))
         self.img_affine = tmp_img.affine
         self.bground_image = tmp_img.get_fdata()
@@ -220,7 +220,7 @@ class GadgetData:
             for ss in range(no_subjects):
                 self.mask_images[self.labels[0]].append(load_nifti(self.mask_fnames[ss]))
                 self.receptor_data[labels[0]].append(get_receptor_data(self.receptor_list.iloc[:, 0].values,
-                                                              self.mask_images[labels[0]][ss], data_dir))
+                                                                       self.mask_images[labels[0]][ss], data_dir))
         else:
             for ll, label in enumerate(labels):
                 self.mask_images[label] = load_nifti(self.mask_fnames[ll])
