@@ -11,6 +11,7 @@ import pandas as pd
 import inspect
 from copy import deepcopy
 
+
 def is_valid(var, var_type, list_type=None):
     """
     Check that the var is of a certain type.
@@ -124,6 +125,7 @@ def extract_mrna(subunit_path, region_mask):
 
     return region_norm
 
+
 def get_receptor_data(receptors, mask, data_dir):
     """
     Extract mRNA data for each gene from a given mask.
@@ -147,7 +149,10 @@ def get_receptor_data(receptors, mask, data_dir):
     out = np.zeros((len(mask[mask==1]), len(receptors)))
     for rr, receptor in enumerate(receptors):
         out[:, rr] = extract_mrna(os.path.join(data_dir, 'mRNA_images', f'{receptor}_mirr_mRNA.nii'), mask)
-    return out
+    out_df = pd.DataFrame(data=out, columns=receptors)
+    # Drop voxels where there is no expression data
+    out_df = out_df.drop(out_df[out_df < 0.1].index)
+    return out_df
 
 
 class GadgetData:
@@ -201,7 +206,7 @@ class GadgetData:
         # Load built-in data
         data_dir = '/media/storage2/Inspectro-Gadget/inspectro_gadget/data' ###### Change this!!!
         #data_dir = os.path.dirname(inspect.getfile(inspectro_gadget))
-        self.receptor_list = pd.read_csv(os.path.join(data_dir, 'GroupedReceptors.tsv'), delimiter='\t', header=None)
+        self.receptor_list = pd.read_csv(os.path.join(data_dir, 'GroupedReceptors.tsv'), delimiter='\t')
         tmp_img = ni.load(os.path.join(data_dir, 'MNI152_T1_2mm.nii.gz'))
         self.img_affine = tmp_img.affine
         self.bground_image = tmp_img.get_fdata()
