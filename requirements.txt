@@ -2,3 +2,6 @@ joblib
 matplotlib
 nibabel
 numpy
+scipy
+pandas
+seaborn
