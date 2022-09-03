@@ -16,6 +16,8 @@ from scipy.stats import trim_mean, norm, mstats
 from joblib import Parallel, delayed
 from scipy import stats
 from sklearn import preprocessing
+import textwrap as twp
+
 
 def stats_compare(data, receptors, subunits, mask_names,n_samples=10000):
     print('Running region comparisons for:')
@@ -110,7 +112,6 @@ def stats_compare(data, receptors, subunits, mask_names,n_samples=10000):
         # corrected_pvals = multi.multipletests(pvals_numpy, alpha=0.05, method='bonferroni')
         # orig_pvals = pd.DataFrame(pvals).T
         # new_pvals = pd.DataFrame(corrected_pvals[1]).T
-        print(KStest_all)
         #dvals = pd.DataFrame(dvals)
         #pctDifs_df = pd.DataFrame(pctDifs)
         pctDifs_row = []
@@ -140,8 +141,8 @@ def stats_compare(data, receptors, subunits, mask_names,n_samples=10000):
         alldata_outputs[r]=subunit_outputs
 
         #remove 0's and make violin plots
-        
-        df_removed = compare_data[(compare_data != 0).all(1)]
+        #df_removed = compare_data[(compare_data != 0).all(1)]
+        df_removed = compare_data[(compare_data['value'] > 0.1)]
 
         
         sns.set_palette("hls", 8)
@@ -167,7 +168,6 @@ def stats_compare(data, receptors, subunits, mask_names,n_samples=10000):
 
         for row in range(0, len(tmp)):
             cell_text.append(['%s' % (value) for value in tmp[row,:]])
-        print(cell_text)
         rows = ['% difference','Cohen\'s d', "KS_D"]
         columns = ['%s' % (unit) for unit in r_sub[0]]
         the_table = plot.table(cellText=cell_text,

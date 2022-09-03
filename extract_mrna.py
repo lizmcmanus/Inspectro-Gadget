@@ -22,19 +22,10 @@ def extract_mrna(subunit_path, region_mask):
     IQRx = (Q3-Q1)/1.35
     
     
-    #mrna_removed = mrna[(mrna != 0)]
-    
     #robust sigmoid
     Xy = 1/(1+ np.exp(-(mrna-median)/IQRx))
+    
+    #extract region norm
     region_norm = Xy[region_mask==1]
     
-    
-   
-    
-
-    
-    
-
-   
-
     return region_norm

@@ -18,13 +18,12 @@ def make_violin(data, name, receptor, fig):
     subunits = name[0]
     #remove any rows with 0 values (may be that voxels were white matter so have no receptors)
    
-    #due to new mrna extraction normalisation, 0's aren't 0, they're just very small numbers
-    #df_missing_removed = df[(df >0.001).all(1)] # this is removing any row that has a missing value, not just the missing values in a column!!!
    
     
     # Violin plots of each subunit per receptor
    # sns.set_theme(style="whitegrid")
-    plot = sns.violinplot(data=df, inner = "box", ax=fig, linewidth=0.1, grid_linewidth=1)
+    pal= sns.color_palette("hls", 7)
+    plot = sns.violinplot(data=df, inner = "box", ax=fig, linewidth=0.1, grid_linewidth=1, palette=pal)
     fig.set_title(receptor, fontsize=6)
     fig.set_xticks(np.arange(0, n))
     fig.set_xticklabels(subunits, fontsize=6, rotation = 45)

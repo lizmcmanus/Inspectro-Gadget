@@ -36,5 +36,5 @@ def make_radar(data, receptor, mask_names):
         a = a+1
      
     # Add legend
-    plt.legend(loc='upper left', bbox_to_anchor=(-0.4, 1), fontsize=7)
+    plt.legend(loc='upper left', bbox_to_anchor=(-0.3, 1), fontsize=7)
     

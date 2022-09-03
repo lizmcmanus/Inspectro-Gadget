@@ -30,8 +30,6 @@ data_dir = os.getcwd()
 output_dir = os.path.join(data_dir,'expression')
 #variable for all masks and receptors
 all_region_data = {}
-
-
 receptors_list = pd.read_csv(os.path.join(data_dir,'GroupedReceptors.tsv'), delimiter='\t', header=None)
 subtype = pd.read_csv(os.path.join(data_dir,'subtype_receptors.tsv'), delimiter='\t', header=None)
 #extract unique receptors
@@ -62,12 +60,11 @@ for m, mask in enumerate(masks):
 
     #variable to hold all subunits data
     all_subunit_data = {}
-    
     all_subtype_data = {}
     #variable for excitation inhibition scores per region
     
     ExIn = {}
-    
+
     # loop thorugh each receptor type for violin plots
     for i, receptor_t in enumerate(receptors):
 
@@ -75,26 +72,17 @@ for m, mask in enumerate(masks):
         receptor_type = receptors_list.loc[receptors_list[1] == receptor_t]
         receptor_region_data = np.zeros([mask_size,len(receptor_type[0])])
 
-        recep_removed = pd.DataFrame([])
         #loop through subunits within each receptor type
         for a, sub_a in enumerate(receptor_type[0]):
             #call function to extract mrna data within each region
             subunit_path = os.path.join(data_dir,'mRNA_images',sub_a+'_mirr_mRNA.nii')
             receptor_region_data[:,a] = extract_mrna(subunit_path, region_mask)
-            
-            col = receptor_region_data[:,a]
-            col_removed = col[col > 0.1]
-            col_df = pd.DataFrame(col_removed)
-            recep_removed = pd.concat([recep_removed, col_df], axis=1)
-            
-
 
         #all subunits for each receptor type stored in this variable
         all_subunit_data[receptor_t]=receptor_region_data
-        
 
-        #function to make violin plots per receptor for each mask individually (same as single region)
-        make_violin(recep_removed, receptor_type, receptor_t, axs[y,x])
+        #function to make violin plots per receptor and saves all as one pdf
+        make_violin(receptor_region_data, receptor_type, receptor_t, axs[y,x])
         x += 1
         if x > 2:
             y += 1

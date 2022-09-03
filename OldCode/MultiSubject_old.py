@@ -33,7 +33,7 @@ receptors = pd.read_csv(os.path.join(data_dir,'receptors.tsv'), delimiter='\t', 
 subjects = pd.read_csv(os.path.join(data_dir,'subjects.tsv'), delimiter='\t', header=None)
 #subject = np.array(subjects)
 sub_id = [sub.replace(".nii.gz","") for i,sub in enumerate(subjects[0])]
-sub_id = [sub2.replace("ACC_in_MNI_","") for sub2 in sub_id]
+sub_id = [sub2.replace("MCC_in_MNI_","") for sub2 in sub_id]
 sub_id = pd.DataFrame(sub_id)
 sub_id_mean = sub_id.append(['Mean'], ignore_index=True)
 
@@ -60,7 +60,6 @@ for m, mask in enumerate(subjects[0]):
     mask_size = region_mask[region_mask==1]
     mask_size = len(mask_size)
     mask_filename = mask_filename.replace(".nii.gz","")
-
 
 
 ### Making array of data for each subject for all GABA/Glu subunits  
@@ -118,13 +117,13 @@ radar_pdf.close()
   #out_pdf = pdf.PdfPages(mask_filename+"_receptor_expressions.pdf");
 fig,axs = plt.subplots(nrows=2, ncols=3, sharex=False,sharey=False, figsize=(10, 7), linewidth=0.01)
 plt.tick_params(bottom=False, top=False, left=False, right=False)
-fig.text(0.015, 0.5, 'Normalised mRNA Expression Value', va='center', ha='center', rotation='vertical', fontsize=12)
-fig.tight_layout(pad = 5.0)
+fig.text(0.015, 0.5, 'Normalised mRNA Expression Value', va='center', ha='center', rotation='vertical', fontsize=8)
+fig.tight_layout(pad = 4.0)
 x = 0
 y = 0
 
 
-#this loop creates arrays for each receptor subunit with all participants in it so this cna be used to make the violins    
+#this loop creates arrays for each receptor subunit with all participants int it so this cna be used to make the violins    
 for re, GABAGlu_recep in enumerate(GABA_Glu[0]):
     recep_sub_data = []
     recep_allsub = pd.DataFrame([])
@@ -158,7 +157,7 @@ for re, GABAGlu_recep in enumerate(GABA_Glu[0]):
           ####height = 2,
           colLabels=columns,
           loc='bottom')
-    sub_table.set_fontsize(4)  
+    sub_table.set_fontsize(6)  
 
 
     x += 1
@@ -186,7 +185,7 @@ for ei, mask_ei in enumerate(subjects[0]):
 
 #plotting e/i ratio's in table and saving as pdf
 ExIn_all = np.round(ExIn_all, 3)
-title = [twp.fill('Excitation/Inhibition Ratio', 25)]
+title = [twp.fill('Excitation/Inhibition Ratio', 40)]
 fig, ax = plt.subplots() 
 ax.set_axis_off()
 cols = sub_id[0] 
@@ -195,9 +194,8 @@ table = ax.table(
     rowLabels = title,
     colLabels = cols,  
     loc ='center')     
-fig.tight_layout(pad = 2.5)#still having trouble with massive row label!    
+#fig.tight_layout(pad = 5.0)#still having trouble with massive row label!    
 ax.set_title('Multi-Subjet Excitation/Inhibition Ratio''s', fontweight ="bold", loc="center")
-table.set_fontsize(4)  
    
 ExIn_pdf.savefig()
 ExIn_pdf.close()
