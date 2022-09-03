@@ -105,7 +105,7 @@ def plot_overlap(overlap, labels, bground):
     return fig
 
 
-def make_violin(ax, receptors, group):
+def make_single_violin(ax, receptors, group):
     """
     Create a subplot with violin plots showing receptor expression for a group of subunits.
 
