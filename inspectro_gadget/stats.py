@@ -11,12 +11,56 @@ import matplotlib.backends.backend_pdf as pdf
 import matplotlib.pyplot as plt
 import statsmodels.stats.multitest as multi
 from matplotlib.ticker import AutoMinorLocator
-from scipy.stats import trim_mean, norm, mstats
+from scipy.stats import trim_mean, norm, mstats, kstest
 from joblib import Parallel, delayed
-from scipy import stats
 from sklearn import preprocessing
 
 
+def compare_regions(subunit_data, receptor_list, n_samples=5000):
+    """
+    Compare receptor subunit expression between two regions.
+
+    Parameters
+    ----------
+    subunit_data: dict
+        Dictionary with the receptor expression values for the two regions
+    receptor_list: dataframe
+        Dataframe containing the list of receptor subunits and the receptors they compose. Analysis is grouped by
+        receptor type
+    n_samples: int
+        Number of permutations for calculating confidence intervals
+
+    Returns
+    -------
+
+
+    """
+    region_names = list(subunit_data.keys())
+    subunit_d_vals = {}
+    subunit_d_cis = {}
+    subunit_ks_vals = {}
+    subunit_pct_diff = {}
+    # Loop through receptor types
+    for receptor in np.unique(receptor_list['grouping']):
+        # Modify alpha for number of comparisons
+        alpha = 0.05/receptor_list[receptor_list.grouping == receptor].shape[0]
+        for subunit in receptor_list[receptor_list.grouping == receptor]['subunit']:
+            # Get data and remove NaNs
+            region_one = subunit_data[region_names[0]][subunit].values
+            region_two = subunit_data[region_names[1]][subunit].values
+            region_one = region_one[~np.isnan(region_one)]
+            region_two = region_two[~np.isnan(region_two)]
+            # Compare subunit values
+            subunit_pct_diff[subunit], subunit_d_vals[subunit], subunit_d_cis[subunit] = bootstrap_diff(region_one,
+                                                                                                        region_two,
+                                                                                                        n_samples=n_samples,
+                                                                                                        alpha=alpha)
+            # Mean centre for KS test
+            region_one = region_one - np.mean(region_one)
+            region_two = region_two - np.mean(region_two)
+            # Apply KS test
+            subunit_ks_vals[subunit] = kstest(region_one, region_two,  alternative='two-sided', mode='auto').statistic
+    return subunit_d_vals, subunit_d_cis, subunit_pct_diff, subunit_ks_vals
 
 
 def calc_cohend(g1, g2):
@@ -134,4 +178,4 @@ def bootstrap_diff(g1, g2, n_samples=10000, alpha=0.05):
     pctDif = mDif/np.median(g2_mad)*100
     #mPerm = np.array(Parallel(n_jobs=-2,verbose=0)(delayed(perm_median)(g1_mad,g2_mad)for i in range(n_samples)))
     # p = len(np.where(np.abs(mPerm)>=np.abs(mDif))[0])/float(n_samples)
-    return pctDif, D, Dci[0], Dci[1]
+    return pctDif, D, Dci
