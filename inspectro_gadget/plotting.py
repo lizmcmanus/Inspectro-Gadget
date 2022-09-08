@@ -149,7 +149,6 @@ def single_region_violins(subunit_data, receptor_list, pdf):
     plt.tick_params(bottom=False, top=False, left=False, right=False)
     fig.text(0.015, 0.5, 'Normalised mRNA Expression Value', va='center', ha='center', rotation='vertical', fontsize=12)
     fig.tight_layout(pad=4.0)
-    cnt = 0
     for rr, receptor in enumerate(['GABAA_Alpha', 'GABAA_Beta', 'GABAA_Gamma']):
         axs[0, rr] = make_single_violin(axs[0, rr],
                                         subunit_data[receptor_list.subunit[receptor_list.grouping == receptor].values],
@@ -159,13 +158,13 @@ def single_region_violins(subunit_data, receptor_list, pdf):
                                         subunit_data[receptor_list.subunit[receptor_list.grouping == receptor].values],
                                         receptor)
     pdf.savefig(fig)
+    plt.close()
     # Second PDF page
     fig, axs = plt.subplots(nrows=2, ncols=3, sharex=False, sharey=False, figsize=(10, 7), linewidth=0.01)
     plt.tick_params(bottom=False, top=False, left=False, right=False)
     fig.text(0.015, 0.5, 'Normalised mRNA Expression Value', va='center', ha='center', rotation='vertical', fontsize=12)
     fig.tight_layout(pad=4.0)
-    cnt = 0
-    for rr, receptor in enumerate(['mGlu(I)', 'mGlu(II)', 'mGlu(III']):
+    for rr, receptor in enumerate(['mGlu(I)', 'mGlu(II)', 'mGlu(III)']):
         axs[0, rr] = make_single_violin(axs[0, rr],
                                         subunit_data[receptor_list.subunit[receptor_list.grouping == receptor].values],
                                         receptor)
@@ -173,13 +172,13 @@ def single_region_violins(subunit_data, receptor_list, pdf):
         axs[1, rr] = make_single_violin(axs[1, rr],
                                         subunit_data[receptor_list.subunit[receptor_list.grouping == receptor].values],
                                         receptor)
+    plt.close()
     pdf.savefig(fig)
     # Third PDF page
     fig, axs = plt.subplots(nrows=2, ncols=3, sharex=False, sharey=False, figsize=(10, 7), linewidth=0.01)
     plt.tick_params(bottom=False, top=False, left=False, right=False)
     fig.text(0.015, 0.5, 'Normalised mRNA Expression Value', va='center', ha='center', rotation='vertical', fontsize=12)
     fig.tight_layout(pad=4.0)
-    cnt = 0
     for rr, receptor in enumerate(['5-HT2', '5-HT3+', 'NAalpha1']):
         axs[0, rr] = make_single_violin(axs[0, rr],
                                         subunit_data[receptor_list.subunit[receptor_list.grouping == receptor].values],
@@ -189,6 +188,7 @@ def single_region_violins(subunit_data, receptor_list, pdf):
                                         subunit_data[receptor_list.subunit[receptor_list.grouping == receptor].values],
                                         receptor)
     fig.delaxes(axs[1][2])
+    plt.close()
     pdf.savefig(fig)
 
 
