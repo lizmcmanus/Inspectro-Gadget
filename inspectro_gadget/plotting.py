@@ -130,3 +130,67 @@ def make_single_violin(ax, receptors, group):
     ax.tick_params(axis='y', which='major', labelsize=6)
     return ax
 
+
+def single_region_violins(subunit_data, receptor_list, pdf):
+    """
+
+    Parameters
+    ----------
+    subunit_data
+    receptor_list
+    pdf
+
+    Returns
+    -------
+
+    """
+    # First PDF page
+    fig, axs = plt.subplots(nrows=2, ncols=3, sharex=False, sharey=False, figsize=(10, 7), linewidth=0.01)
+    plt.tick_params(bottom=False, top=False, left=False, right=False)
+    fig.text(0.015, 0.5, 'Normalised mRNA Expression Value', va='center', ha='center', rotation='vertical', fontsize=12)
+    fig.tight_layout(pad=4.0)
+    cnt = 0
+    for rr, receptor in enumerate(['GABAA_Alpha', 'GABAA_Beta', 'GABAA_Gamma']):
+        axs[0, rr] = make_single_violin(axs[0, rr],
+                                        subunit_data[receptor_list.subunit[receptor_list.grouping == receptor].values],
+                                        receptor)
+    for rr, receptor in enumerate(['GABAB', 'NMDA', 'AMPA']):
+        axs[1, rr] = make_single_violin(axs[1, rr],
+                                        subunit_data[receptor_list.subunit[receptor_list.grouping == receptor].values],
+                                        receptor)
+    pdf.savefig(fig)
+    # Second PDF page
+    fig, axs = plt.subplots(nrows=2, ncols=3, sharex=False, sharey=False, figsize=(10, 7), linewidth=0.01)
+    plt.tick_params(bottom=False, top=False, left=False, right=False)
+    fig.text(0.015, 0.5, 'Normalised mRNA Expression Value', va='center', ha='center', rotation='vertical', fontsize=12)
+    fig.tight_layout(pad=4.0)
+    cnt = 0
+    for rr, receptor in enumerate(['mGlu(I)', 'mGlu(II)', 'mGlu(III']):
+        axs[0, rr] = make_single_violin(axs[0, rr],
+                                        subunit_data[receptor_list.subunit[receptor_list.grouping == receptor].values],
+                                        receptor)
+    for rr, receptor in enumerate(['Kainate', 'Dopamine', '5-HT1']):
+        axs[1, rr] = make_single_violin(axs[1, rr],
+                                        subunit_data[receptor_list.subunit[receptor_list.grouping == receptor].values],
+                                        receptor)
+    pdf.savefig(fig)
+    # Third PDF page
+    fig, axs = plt.subplots(nrows=2, ncols=3, sharex=False, sharey=False, figsize=(10, 7), linewidth=0.01)
+    plt.tick_params(bottom=False, top=False, left=False, right=False)
+    fig.text(0.015, 0.5, 'Normalised mRNA Expression Value', va='center', ha='center', rotation='vertical', fontsize=12)
+    fig.tight_layout(pad=4.0)
+    cnt = 0
+    for rr, receptor in enumerate(['5-HT2', '5-HT3+', 'NAalpha1']):
+        axs[0, rr] = make_single_violin(axs[0, rr],
+                                        subunit_data[receptor_list.subunit[receptor_list.grouping == receptor].values],
+                                        receptor)
+    for rr, receptor in enumerate(['NAalpha2', 'NAbeta']):
+        axs[1, rr] = make_single_violin(axs[1, rr],
+                                        subunit_data[receptor_list.subunit[receptor_list.grouping == receptor].values],
+                                        receptor)
+    fig.delaxes(axs[1][2])
+    pdf.savefig(fig)
+
+
+
+
