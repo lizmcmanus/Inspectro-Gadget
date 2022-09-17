@@ -93,9 +93,9 @@ def ex_in(subunit_data, receptor_list):
     return (nmda+ampa)/(gabaa_a+gabaa_b+gabaa_g)
 
 
-def subject_mean(subunit_data, receptor_list):
+def subject_median(subunit_data, receptor_list):
     """
-    Calculate the mean gene expression for each subunit per subject.
+    Calculate the median gene expression for each subunit per subject.
 
     Returns a dataframe with subject as rows and subunit name as columns.
 
@@ -113,7 +113,7 @@ def subject_mean(subunit_data, receptor_list):
     """
     df = pd.DataFrame(columns=receptor_list.subunit)
     for subject in subunit_data.keys():
-        df.loc[subject, :] = np.nanmean(subunit_data[subject], axis=0)
+        df.loc[subject, :] = np.nanmedian(subunit_data[subject], axis=0)
     return df
 
 
