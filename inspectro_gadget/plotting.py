@@ -345,6 +345,47 @@ def two_region_violins(subunit_data, receptor_list, pdf, subunit_pct_diff, subun
     return pdf
 
 
+def two_region_radar(subunit_data, receptor_list, labels, pdf):
+
+    fig = plt.figure()
+    gs = gridspec.GridSpec(1, 2)
+    radars = ['mod_radar', 'trans_radar']
+    for rr, region in enumerate(labels):
+        df = receptor_median.loc[:, receptor_list.multisub_radar.values]
+        ax = fig.add_subplot(gs[0, rr])
+
+
+    df = receptor_median.loc[:, receptor_list.multisub_radar.values]
+    subjects = df.index.values
+    subunits = df.columns.values
+    n_subunits = len(subunits)
+
+    angles = [n / float(n_subunits) * 2 * np.pi for n in range(n_subunits)]
+    angles += angles[:1]  # Why is this done??
+
+    fig = plt.figure()
+    ax = fig.add_subplot(111, polar=True)
+    ax.set_theta_offset(np.pi / 2)
+    ax.set_theta_direction(-1)
+    plt.xticks(angles[:-1], receptors, size=7)
+    ax.set_rlabel_position(0)
+    plt.yticks([0, 0.2, 0.4, 0.6, 0.8, 1], ["0,", "0.2", "0.4", "0.6", "0.8", "1"], color="grey", size=6)
+    plt.ylim(0, 1)
+
+    for subject in subjects:
+        values = df.loc[subject, :].values.flatten().tolist()
+    values += values[:1]  # Why is this done??
+    ax.plot(angles, values, linewidth=1, linestyle='solid', label=subject)
+    # ax.fill(angles, values, alpha=0.1)
+
+    # Add legend
+    ax.legend(loc='upper left', bbox_to_anchor=(-0.4, 1), fontsize=7)
+    fig.tight_layout(pad=3.0)
+    pdf.savefig(fig)
+    plt.close()
+    return pdf
+
+
 def split_subunit_list(subunits, length):
     """
     Split a list of subunits into sublists of set length. Used to get lists of subunits that will fit on a single
