@@ -10,6 +10,7 @@ import matplotlib.gridspec as gridspec
 import numpy as np
 import pandas as pd
 import seaborn as sb
+from matplotlib import table
 from matplotlib.ticker import AutoMinorLocator
 from scipy.ndimage import center_of_mass
 
@@ -235,8 +236,8 @@ def make_two_violins(ax, receptors, group, pcts, ds, ds_ci, kss):
                  [f'{ks:0.2f}' for ks in kss]]
     columns = np.unique(receptors.subunit)
     # Plot data
-    sb.violinplot(data=receptors, x='subunit', y='values', hue='region',
-                  inner="box", ax=ax, linewidth=0.1, grid_linewidth=1)
+    sb.violinplot(data=receptors, x='subunit', y='values', hue='region', inner="box",
+                  ax=ax, linewidth=0.1, grid_linewidth=1)
     ax.set_title(group, fontsize=6)
     ax.tick_params(axis='y', which='both', labelsize=4, width=0.5)
     ax.set_xticklabels([])
@@ -254,7 +255,7 @@ def make_two_violins(ax, receptors, group, pcts, ds, ds_ci, kss):
     return ax
 
 
-def two_region_prep(subunit_data, receptor_list, receptor , subunit_pct_diff, subunit_d_vals, subunit_d_cis, subunit_ks_vals):
+def two_region_prep(subunit_data, receptor_list, receptor, subunit_pct_diff, subunit_d_vals, subunit_d_cis, subunit_ks_vals):
     # Arrange subunit data into dataframe for plotting
     subunit_exp = pd.DataFrame(columns=['values', 'subunit', 'region'])
     for region in list(subunit_data.keys()):
@@ -343,7 +344,81 @@ def two_region_violins(subunit_data, receptor_list, pdf, subunit_pct_diff, subun
     plt.close()
     return pdf
 
+def split_receptor_list(receptors, length):
+    # Loop to required length
+    for i in range(0, len(receptors), length):
+        # Yield means the function starts where it finished the last time
+        yield receptors[i:i + length]
+
+
+def multisub_prep(subunit_data, subunit, receptor_median):
+    subunit_exp = []
+    for subject in receptor_median.index:
+        subunit_exp.append(subunit_data[subject].loc[:, subunit].dropna())
+    median_dist = (receptor_median[subunit].values/np.median(receptor_median[subunit].values)*100)-100
+    return subunit_exp, receptor_median[subunit], median_dist
+
+
+def make_multisub_violin(ax, subunit_exp, subunit, medians, median_dist):
+    subjects = medians.index.values
+    n_subs = len(subjects)
+    # Table contents
+    rows = ['% from\nmedian']
+    cell_text = [[f'{dist:0.2f}' for dist in median_dist]]
+    cell_text[0].append('')  # Blank for median column
+    columns = list(medians.index.values)
+    columns.append('Median')
+    # Plot data
+    for ss in range(n_subs):
+        ax.violinplot([subunit_exp[ss]], positions=[ss], showextrema=False)
+        ax.scatter(n_subs, medians.iloc[ss], s=18)
+    # Add overall median as dot
+    ax.scatter(n_subs, np.median(medians), edgecolor='black', facecolor=None, s=24)
+    ax.set_title(subunit, fontsize=6)
+    ax.tick_params(axis='y', which='both', labelsize=4, width=0.5)
+    ax.set_xticklabels([])
+    ax.set_xticks([])
+    ax.set_xlabel("")
+    ax.set_ylabel("")
+    minor_locator = AutoMinorLocator(2)
+    ax.xaxis.set_minor_locator(minor_locator)
+    ax.grid(which='minor', linestyle='-', linewidth='0.01')
+    # Add table
+    the_table = table.table(ax, cellText=cell_text, rowLabels=rows, colLabels=columns, loc='bottom')
+    the_table.set_fontsize(6)
+    the_table.scale(1, 1.1)
+    return ax
+
 
 def multisub_violin(subunit_data, receptor_list, pdf, receptor_median):
+    # Split the receptor list into sublists of six to fit page
+    subunit_lists = list(split_receptor_list(receptor_list.loc[receptor_list.multisub_violin, 'subunit'].values, 6))
+    # Create plots
+    for subunits in subunit_lists:
+        fig, axs = plt.subplots(nrows=2, ncols=3, sharex=False, sharey=False, figsize=(10, 7), linewidth=0.01)
+        plt.tick_params(bottom=False, top=False, left=False, right=False)
+        fig.text(0.015, 0.5, 'Normalised mRNA Expression Value', va='center', ha='center', rotation='vertical',
+                 fontsize=12)
+        fig.tight_layout(pad=4.0)
+        for rr, subunit in enumerate(subunits[0:3]):
+            # Prepare data
+            subunit_exp, medians, median_dist = multisub_prep(subunit_data, subunit, receptor_median)
+            # Make plot
+            axs[0, rr] = make_multisub_violin(axs[0, rr], subunit_exp, subunit, medians, median_dist)
+        for rr, subunit in enumerate(subunits[3:]):
+            # Prepare data
+            subunit_exp, medians, median_dist = multisub_prep(subunit_data, subunit, receptor_median)
+            # Make plot
+            axs[1, rr] = make_multisub_violin(axs[1, rr], subunit_exp, subunit, medians, median_dist)
+        if len(subunits) == 4:
+            fig.delaxes(axs[1][1])
+            fig.delaxes(axs[1][2])
+        if len(subunits) == 5:
+            fig.delaxes(axs[1][2])
+        fig.tight_layout(pad=3.0)
+        pdf.savefig(fig)
+        plt.close()
+    return pdf
+
 
 
