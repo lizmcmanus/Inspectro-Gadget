@@ -93,6 +93,30 @@ def ex_in(subunit_data, receptor_list):
     return (nmda+ampa)/(gabaa_a+gabaa_b+gabaa_g)
 
 
+def subject_mean(subunit_data, receptor_list):
+    """
+    Calculate the mean gene expression for each subunit per subject.
+
+    Returns a dataframe with subject as rows and subunit name as columns.
+
+    Parameters
+    ----------
+    subunit_data: dict
+        Dictionary containing all subject's expression data
+    receptor_list: dataframe
+        Dataframe with all subunit names
+
+    Returns
+    -------
+    Dataframe
+
+    """
+    df = pd.DataFrame(columns=receptor_list.subunit)
+    for subject in subunit_data.keys():
+        df.loc[subject, :] = np.nanmean(subunit_data[subject], axis=0)
+    return df
+
+
 def calc_cohend(g1, g2):
     """
     Calculate Cohen's d for a comparison of two dependent groups.
