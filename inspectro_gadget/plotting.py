@@ -254,7 +254,7 @@ def make_two_violins(ax, receptors, group, pcts, ds, ds_ci, kss):
     return ax
 
 
-def two_region_prep(subunit_data, receptor_list, receptor):
+def two_region_prep(subunit_data, receptor_list, receptor , subunit_pct_diff, subunit_d_vals, subunit_d_cis, subunit_ks_vals):
     # Arrange subunit data into dataframe for plotting
     subunit_exp = pd.DataFrame(columns=['values', 'subunit', 'region'])
     for region in list(subunit_data.keys()):
@@ -273,8 +273,6 @@ def two_region_prep(subunit_data, receptor_list, receptor):
     return subunit_exp, receptor, pcts, ds, ds_ci, kss
 
 
-
-
 def two_region_violins(subunit_data, receptor_list, pdf, subunit_pct_diff, subunit_d_vals, subunit_d_cis, subunit_ks_vals):
     # First PDF page
     fig, axs = plt.subplots(nrows=2, ncols=3, sharex=False, sharey=False, figsize=(10, 7), linewidth=0.01)
@@ -283,12 +281,16 @@ def two_region_violins(subunit_data, receptor_list, pdf, subunit_pct_diff, subun
     fig.tight_layout(pad=4.0)
     for rr, receptor in enumerate(['GABAA_Alpha', 'GABAA_Beta', 'GABAA_Gamma']):
         # Prepare data
-        subunit_exp, receptor, pcts, ds, ds_ci, kss = two_region_prep(subunit_data, receptor_list, receptor)
+        subunit_exp, receptor, pcts, ds, ds_ci, kss = two_region_prep(subunit_data, receptor_list, receptor,
+                                                                      subunit_pct_diff, subunit_d_vals,
+                                                                      subunit_d_cis, subunit_ks_vals)
         # Make plot
         axs[0, rr] = make_two_violins(axs[0, rr], subunit_exp, receptor, pcts, ds, ds_ci, kss)
     for rr, receptor in enumerate(['GABAB', 'NMDA', 'AMPA']):
         # Prepare data
-        subunit_exp, receptor, pcts, ds, ds_ci, kss = two_region_prep(subunit_data, receptor_list, receptor)
+        subunit_exp, receptor, pcts, ds, ds_ci, kss = two_region_prep(subunit_data, receptor_list, receptor,
+                                                                      subunit_pct_diff, subunit_d_vals,
+                                                                      subunit_d_cis, subunit_ks_vals)
         # Make plot
         axs[1, rr] = make_two_violins(axs[1, rr], subunit_exp, receptor, pcts, ds, ds_ci, kss)
     fig.tight_layout(pad=3.0)
@@ -301,12 +303,16 @@ def two_region_violins(subunit_data, receptor_list, pdf, subunit_pct_diff, subun
     fig.tight_layout(pad=4.0)
     for rr, receptor in enumerate(['mGlu(I)', 'mGlu(II)', 'mGlu(III)']):
         # Prepare data
-        subunit_exp, receptor, pcts, ds, ds_ci, kss = two_region_prep(subunit_data, receptor_list, receptor)
+        subunit_exp, receptor, pcts, ds, ds_ci, kss = two_region_prep(subunit_data, receptor_list, receptor,
+                                                                      subunit_pct_diff, subunit_d_vals,
+                                                                      subunit_d_cis, subunit_ks_vals)
         # Make plot
         axs[0, rr] = make_two_violins(axs[0, rr], subunit_exp, receptor, pcts, ds, ds_ci, kss)
     for rr, receptor in enumerate(['Kainate', 'Dopamine', '5-HT1']):
         # Prepare data
-        subunit_exp, receptor, pcts, ds, ds_ci, kss = two_region_prep(subunit_data, receptor_list, receptor)
+        subunit_exp, receptor, pcts, ds, ds_ci, kss = two_region_prep(subunit_data, receptor_list, receptor,
+                                                                      subunit_pct_diff, subunit_d_vals,
+                                                                      subunit_d_cis, subunit_ks_vals)
         # Make plot
         axs[1, rr] = make_two_violins(axs[1, rr], subunit_exp, receptor, pcts, ds, ds_ci, kss)
     fig.tight_layout(pad=3.0)
@@ -319,12 +325,16 @@ def two_region_violins(subunit_data, receptor_list, pdf, subunit_pct_diff, subun
     fig.tight_layout(pad=4.0)
     for rr, receptor in enumerate(['5-HT2', '5-HT3+', 'NAalpha1']):
         # Prepare data
-        subunit_exp, receptor, pcts, ds, ds_ci, kss = two_region_prep(subunit_data, receptor_list, receptor)
+        subunit_exp, receptor, pcts, ds, ds_ci, kss = two_region_prep(subunit_data, receptor_list, receptor,
+                                                                      subunit_pct_diff, subunit_d_vals,
+                                                                      subunit_d_cis, subunit_ks_vals)
         # Make plot
         axs[0, rr] = make_two_violins(axs[0, rr], subunit_exp, receptor, pcts, ds, ds_ci, kss)
     for rr, receptor in enumerate(['NAalpha2', 'NAbeta']):
         # Prepare data
-        subunit_exp, receptor, pcts, ds, ds_ci, kss = two_region_prep(subunit_data, receptor_list, receptor)
+        subunit_exp, receptor, pcts, ds, ds_ci, kss = two_region_prep(subunit_data, receptor_list, receptor,
+                                                                      subunit_pct_diff, subunit_d_vals,
+                                                                      subunit_d_cis, subunit_ks_vals)
         # Make plot
         axs[1, rr] = make_two_violins(axs[1, rr], subunit_exp, receptor, pcts, ds, ds_ci, kss)
     fig.delaxes(axs[1][2])
