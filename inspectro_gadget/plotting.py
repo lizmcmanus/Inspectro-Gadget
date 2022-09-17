@@ -344,11 +344,27 @@ def two_region_violins(subunit_data, receptor_list, pdf, subunit_pct_diff, subun
     plt.close()
     return pdf
 
-def split_receptor_list(receptors, length):
+
+def split_subunit_list(subunits, length):
+    """
+    Split a list of subunits into sublists of set length. Used to get lists of subunits that will fit on a single
+    PDF page.
+
+    Parameters
+    ----------
+    subunits: list
+        List of subunits to split
+    length: int
+        How long the sublists should be
+
+    Returns
+    -------
+
+    """
     # Loop to required length
-    for i in range(0, len(receptors), length):
+    for i in range(0, len(subunits), length):
         # Yield means the function starts where it finished the last time
-        yield receptors[i:i + length]
+        yield subunits[i:i + length]
 
 
 def multisub_prep(subunit_data, subunit, receptor_median):
@@ -392,7 +408,7 @@ def make_multisub_violin(ax, subunit_exp, subunit, medians, median_dist):
 
 def multisub_violin(subunit_data, receptor_list, pdf, receptor_median):
     # Split the receptor list into sublists of six to fit page
-    subunit_lists = list(split_receptor_list(receptor_list.loc[receptor_list.multisub_violin, 'subunit'].values, 6))
+    subunit_lists = list(split_subunit_list(receptor_list.loc[receptor_list.multisub_violin, 'subunit'].values, 6))
     # Create plots
     for subunits in subunit_lists:
         fig, axs = plt.subplots(nrows=2, ncols=3, sharex=False, sharey=False, figsize=(10, 7), linewidth=0.01)
@@ -410,6 +426,7 @@ def multisub_violin(subunit_data, receptor_list, pdf, receptor_median):
             subunit_exp, medians, median_dist = multisub_prep(subunit_data, subunit, receptor_median)
             # Make plot
             axs[1, rr] = make_multisub_violin(axs[1, rr], subunit_exp, subunit, medians, median_dist)
+        # Remove any empty plots
         if len(subunits) == 4:
             fig.delaxes(axs[1][1])
             fig.delaxes(axs[1][2])
@@ -421,4 +438,34 @@ def multisub_violin(subunit_data, receptor_list, pdf, receptor_median):
     return pdf
 
 
+def multisub_radar(receptor_median, receptor_list, pdf):
+    df = receptor_median.loc[:, receptor_list.multisub_radar.values]
+    subjects = df.index.values
+    n_subs = len(subjects)
+    receptors = df.columns.values
+    n_receptors = len(receptors)
 
+    angles = [n / float(n_receptors) * 2 * np.pi for n in range(n_receptors)]
+    angles += angles[:1]  # Why is this done??
+
+    fig = plt.figure()
+    ax = fig.add_subplot(111, polar=True)
+    ax.set_theta_offset(np.pi / 2)
+    ax.set_theta_direction(-1)
+    plt.xticks(angles[:-1], receptors, size=7)
+    ax.set_rlabel_position(0)
+    plt.yticks([0, 0.2, 0.4, 0.6, 0.8, 1], ["0,", "0.2", "0.4", "0.6", "0.8", "1"], color="grey", size=6)
+    plt.ylim(0, 1)
+
+    for subject in subjects:
+        values = df.loc[subject, :].values.flatten().tolist()
+        values += values[:1]  # Why is this done??
+        ax.plot(angles, values, linewidth=1, linestyle='solid', label=subject)
+        #ax.fill(angles, values, alpha=0.1)
+
+    # Add legend
+    ax.legend(loc='upper left', bbox_to_anchor=(-0.4, 1), fontsize=7)
+    fig.tight_layout(pad=3.0)
+    pdf.savefig(fig)
+    plt.close()
+    return pdf

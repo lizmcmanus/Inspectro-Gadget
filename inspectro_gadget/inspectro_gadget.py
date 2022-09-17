@@ -95,6 +95,6 @@ def inspectro_gadget(mask_fnames, mask_labels=None, in_dir=None, out_root=None, 
 
         # Radar plots
         if data.multi_subject:
-            pdf = plotting.multi_sub_violin(data.receptor_data, data.receptor_list, pdf, data.receptor_median)
+            pdf = plotting.multisub_radar(data.receptor_median, data.receptor_list, pdf)
 
 
