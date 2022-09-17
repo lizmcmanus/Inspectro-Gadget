@@ -11,7 +11,6 @@ import numpy as np
 import pandas as pd
 import seaborn as sb
 from matplotlib.ticker import AutoMinorLocator
-from matplotlib.table import table
 from scipy.ndimage import center_of_mass
 
 
@@ -249,8 +248,31 @@ def make_two_violins(ax, receptors, group, pcts, ds, ds_ci, kss):
     ax.xaxis.set_minor_locator(minor_locator)
     ax.grid(which='minor', linestyle='-', linewidth='0.01')
     # Add table
-    ax.table(cellText=cell_text, rowLabels=rows, colLabels=columns, loc='bottom')
+    the_table = table(ax, cellText=cell_text, rowLabels=rows, colLabels=columns, loc='bottom')
+    the_table.set_fontsize(8)
+    the_table.scale(1, 0.7)
     return ax
+
+
+def two_region_prep(subunit_data, receptor_list, receptor):
+    # Arrange subunit data into dataframe for plotting
+    subunit_exp = pd.DataFrame(columns=['values', 'subunit', 'region'])
+    for region in list(subunit_data.keys()):
+        for subunit in receptor_list.subunit[receptor_list.grouping == receptor].values:
+            df = pd.DataFrame()
+            df['values'] = subunit_data[region][subunit]
+            df['subunit'] = subunit
+            df['region'] = region
+            subunit_exp = pd.concat((subunit_exp, df), axis=0)
+    subunit_exp = subunit_exp.dropna()
+    # Arrange stats
+    pcts = [subunit_pct_diff[subunit] for subunit in receptor_list.subunit[receptor_list.grouping == receptor].values]
+    ds = [subunit_d_vals[subunit] for subunit in receptor_list.subunit[receptor_list.grouping == receptor].values]
+    ds_ci = [subunit_d_cis[subunit] for subunit in receptor_list.subunit[receptor_list.grouping == receptor].values]
+    kss = [subunit_ks_vals[subunit] for subunit in receptor_list.subunit[receptor_list.grouping == receptor].values]
+    return subunit_exp, receptor, pcts, ds, ds_ci, kss
+
+
 
 
 def two_region_violins(subunit_data, receptor_list, pdf, subunit_pct_diff, subunit_d_vals, subunit_d_cis, subunit_ks_vals):
@@ -260,39 +282,13 @@ def two_region_violins(subunit_data, receptor_list, pdf, subunit_pct_diff, subun
     fig.text(0.015, 0.5, 'Normalised mRNA Expression Value', va='center', ha='center', rotation='vertical', fontsize=12)
     fig.tight_layout(pad=4.0)
     for rr, receptor in enumerate(['GABAA_Alpha', 'GABAA_Beta', 'GABAA_Gamma']):
-        # Arrange subunit data into dataframe for plotting
-        subunit_exp = pd.DataFrame(columns=['values', 'subunit', 'region'])
-        for region in list(subunit_data.keys()):
-            for subunit in receptor_list.subunit[receptor_list.grouping == receptor].values:
-                df = pd.DataFrame()
-                df['values'] = subunit_data[region][subunit]
-                df['subunit'] = subunit
-                df['region'] = region
-                subunit_exp = pd.concat((subunit_exp, df), axis=0)
-        subunit_exp = subunit_exp.dropna()
-        # Arrange stats
-        pcts = [subunit_pct_diff[subunit] for subunit in receptor_list.subunit[receptor_list.grouping == receptor].values]
-        ds = [subunit_d_vals[subunit] for subunit in receptor_list.subunit[receptor_list.grouping == receptor].values]
-        ds_ci = [subunit_d_cis[subunit] for subunit in receptor_list.subunit[receptor_list.grouping == receptor].values]
-        kss = [subunit_ks_vals[subunit] for subunit in receptor_list.subunit[receptor_list.grouping == receptor].values]
+        # Prepare data
+        subunit_exp, receptor, pcts, ds, ds_ci, kss = two_region_prep(subunit_data, receptor_list, receptor)
         # Make plot
         axs[0, rr] = make_two_violins(axs[0, rr], subunit_exp, receptor, pcts, ds, ds_ci, kss)
     for rr, receptor in enumerate(['GABAB', 'NMDA', 'AMPA']):
-        # Arrange subunit data into dataframe for plotting
-        subunit_exp = pd.DataFrame(columns=['values', 'subunit', 'region'])
-        for region in list(subunit_data.keys()):
-            for subunit in receptor_list.subunit[receptor_list.grouping == receptor].values:
-                df = pd.DataFrame()
-                df['values'] = subunit_data[region][subunit]
-                df['subunit'] = subunit
-                df['region'] = region
-                subunit_exp = pd.concat((subunit_exp, df), axis=0)
-        subunit_exp = subunit_exp.dropna()
-        # Arrange stats
-        pcts = [subunit_pct_diff[subunit] for subunit in receptor_list.subunit[receptor_list.grouping == receptor].values]
-        ds = [subunit_d_vals[subunit] for subunit in receptor_list.subunit[receptor_list.grouping == receptor].values]
-        ds_ci = [subunit_d_cis[subunit] for subunit in receptor_list.subunit[receptor_list.grouping == receptor].values]
-        kss = [subunit_ks_vals[subunit] for subunit in receptor_list.subunit[receptor_list.grouping == receptor].values]
+        # Prepare data
+        subunit_exp, receptor, pcts, ds, ds_ci, kss = two_region_prep(subunit_data, receptor_list, receptor)
         # Make plot
         axs[1, rr] = make_two_violins(axs[1, rr], subunit_exp, receptor, pcts, ds, ds_ci, kss)
     fig.tight_layout(pad=3.0)
@@ -304,39 +300,13 @@ def two_region_violins(subunit_data, receptor_list, pdf, subunit_pct_diff, subun
     fig.text(0.015, 0.5, 'Normalised mRNA Expression Value', va='center', ha='center', rotation='vertical', fontsize=12)
     fig.tight_layout(pad=4.0)
     for rr, receptor in enumerate(['mGlu(I)', 'mGlu(II)', 'mGlu(III)']):
-        # Arrange subunit data into dataframe for plotting
-        subunit_exp = pd.DataFrame(columns=['values', 'subunit', 'region'])
-        for region in list(subunit_data.keys()):
-            for subunit in receptor_list.subunit[receptor_list.grouping == receptor].values:
-                df = pd.DataFrame()
-                df['values'] = subunit_data[region][subunit]
-                df['subunit'] = subunit
-                df['region'] = region
-                subunit_exp = pd.concat((subunit_exp, df), axis=0)
-        subunit_exp = subunit_exp.dropna()
-        # Arrange stats
-        pcts = [subunit_pct_diff[subunit] for subunit in receptor_list.subunit[receptor_list.grouping == receptor].values]
-        ds = [subunit_d_vals[subunit] for subunit in receptor_list.subunit[receptor_list.grouping == receptor].values]
-        ds_ci = [subunit_d_cis[subunit] for subunit in receptor_list.subunit[receptor_list.grouping == receptor].values]
-        kss = [subunit_ks_vals[subunit] for subunit in receptor_list.subunit[receptor_list.grouping == receptor].values]
+        # Prepare data
+        subunit_exp, receptor, pcts, ds, ds_ci, kss = two_region_prep(subunit_data, receptor_list, receptor)
         # Make plot
         axs[0, rr] = make_two_violins(axs[0, rr], subunit_exp, receptor, pcts, ds, ds_ci, kss)
     for rr, receptor in enumerate(['Kainate', 'Dopamine', '5-HT1']):
-        # Arrange subunit data into dataframe for plotting
-        subunit_exp = pd.DataFrame(columns=['values', 'subunit', 'region'])
-        for region in list(subunit_data.keys()):
-            for subunit in receptor_list.subunit[receptor_list.grouping == receptor].values:
-                df = pd.DataFrame()
-                df['values'] = subunit_data[region][subunit]
-                df['subunit'] = subunit
-                df['region'] = region
-                subunit_exp = pd.concat((subunit_exp, df), axis=0)
-        subunit_exp = subunit_exp.dropna()
-        # Arrange stats
-        pcts = [subunit_pct_diff[subunit] for subunit in receptor_list.subunit[receptor_list.grouping == receptor].values]
-        ds = [subunit_d_vals[subunit] for subunit in receptor_list.subunit[receptor_list.grouping == receptor].values]
-        ds_ci = [subunit_d_cis[subunit] for subunit in receptor_list.subunit[receptor_list.grouping == receptor].values]
-        kss = [subunit_ks_vals[subunit] for subunit in receptor_list.subunit[receptor_list.grouping == receptor].values]
+        # Prepare data
+        subunit_exp, receptor, pcts, ds, ds_ci, kss = two_region_prep(subunit_data, receptor_list, receptor)
         # Make plot
         axs[1, rr] = make_two_violins(axs[1, rr], subunit_exp, receptor, pcts, ds, ds_ci, kss)
     fig.tight_layout(pad=3.0)
@@ -348,39 +318,13 @@ def two_region_violins(subunit_data, receptor_list, pdf, subunit_pct_diff, subun
     fig.text(0.015, 0.5, 'Normalised mRNA Expression Value', va='center', ha='center', rotation='vertical', fontsize=12)
     fig.tight_layout(pad=4.0)
     for rr, receptor in enumerate(['5-HT2', '5-HT3+', 'NAalpha1']):
-        # Arrange subunit data into dataframe for plotting
-        subunit_exp = pd.DataFrame(columns=['values', 'subunit', 'region'])
-        for region in list(subunit_data.keys()):
-            for subunit in receptor_list.subunit[receptor_list.grouping == receptor].values:
-                df = pd.DataFrame()
-                df['values'] = subunit_data[region][subunit]
-                df['subunit'] = subunit
-                df['region'] = region
-                subunit_exp = pd.concat((subunit_exp, df), axis=0)
-        subunit_exp = subunit_exp.dropna()
-        # Arrange stats
-        pcts = [subunit_pct_diff[subunit] for subunit in receptor_list.subunit[receptor_list.grouping == receptor].values]
-        ds = [subunit_d_vals[subunit] for subunit in receptor_list.subunit[receptor_list.grouping == receptor].values]
-        ds_ci = [subunit_d_cis[subunit] for subunit in receptor_list.subunit[receptor_list.grouping == receptor].values]
-        kss = [subunit_ks_vals[subunit] for subunit in receptor_list.subunit[receptor_list.grouping == receptor].values]
+        # Prepare data
+        subunit_exp, receptor, pcts, ds, ds_ci, kss = two_region_prep(subunit_data, receptor_list, receptor)
         # Make plot
         axs[0, rr] = make_two_violins(axs[0, rr], subunit_exp, receptor, pcts, ds, ds_ci, kss)
     for rr, receptor in enumerate(['NAalpha2', 'NAbeta']):
-        # Arrange subunit data into dataframe for plotting
-        subunit_exp = pd.DataFrame(columns=['values', 'subunit', 'region'])
-        for region in list(subunit_data.keys()):
-            for subunit in receptor_list.subunit[receptor_list.grouping == receptor].values:
-                df = pd.DataFrame()
-                df['values'] = subunit_data[region][subunit]
-                df['subunit'] = subunit
-                df['region'] = region
-                subunit_exp = pd.concat((subunit_exp, df), axis=0)
-        subunit_exp = subunit_exp.dropna()
-        # Arrange stats
-        pcts = [subunit_pct_diff[subunit] for subunit in receptor_list.subunit[receptor_list.grouping == receptor].values]
-        ds = [subunit_d_vals[subunit] for subunit in receptor_list.subunit[receptor_list.grouping == receptor].values]
-        ds_ci = [subunit_d_cis[subunit] for subunit in receptor_list.subunit[receptor_list.grouping == receptor].values]
-        kss = [subunit_ks_vals[subunit] for subunit in receptor_list.subunit[receptor_list.grouping == receptor].values]
+        # Prepare data
+        subunit_exp, receptor, pcts, ds, ds_ci, kss = two_region_prep(subunit_data, receptor_list, receptor)
         # Make plot
         axs[1, rr] = make_two_violins(axs[1, rr], subunit_exp, receptor, pcts, ds, ds_ci, kss)
     fig.delaxes(axs[1][2])
@@ -388,3 +332,8 @@ def two_region_violins(subunit_data, receptor_list, pdf, subunit_pct_diff, subun
     pdf.savefig(fig)
     plt.close()
     return pdf
+
+
+def multisub_violin(subunit_data, receptor_list, pdf, receptor_median):
+
+
