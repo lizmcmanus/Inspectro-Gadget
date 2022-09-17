@@ -227,3 +227,6 @@ class GadgetData:
                 self.mask_images[label] = load_nifti(self.mask_fnames[ll])
                 self.receptor_data[label] = get_receptor_data(self.receptor_list.iloc[:, 0].values,
                                                               self.mask_images[label], data_dir)
+
+        # Inititate common stats variables
+        self.ex_in_ratio = {}
