@@ -180,6 +180,8 @@ class GadgetData:
         receptor_data: dict
             Dictionary containing the normalised mRNA expression values. Keys are region labels. Arrays within have a
             row per voxel and column per gene. Multi-subject analyses contain separate arrays per subject in a list.
+        ex_in_ratio: dictionary
+            Excitation/inhibition ratio for each region (and participant where relevant)
 
     Methods
     -------
@@ -215,12 +217,11 @@ class GadgetData:
         self.mask_images = {}
         self.receptor_data = {}
         if self.multi_subject:
-            self.mask_images[self.labels[0]] = []
-            self.receptor_data[self.labels[0]] = []
             for ss in range(no_subjects):
-                self.mask_images[self.labels[0]].append(load_nifti(self.mask_fnames[ss]))
-                self.receptor_data[labels[0]].append(get_receptor_data(self.receptor_list.iloc[:, 0].values,
-                                                                       self.mask_images[labels[0]][ss], data_dir))
+                print(f'Loading data for subject {self.labels[ss]}')
+                self.mask_images[self.labels[ss]] = load_nifti(self.mask_fnames[ss])
+                self.receptor_data[labels[ss]] = get_receptor_data(self.receptor_list.iloc[:, 0].values,
+                                                                       self.mask_images[labels[ss]], data_dir)
         else:
             for ll, label in enumerate(labels):
                 self.mask_images[label] = load_nifti(self.mask_fnames[ll])
