@@ -156,6 +156,7 @@ def single_region_violins(subunit_data, receptor_list, pdf):
 
     Returns
     -------
+    PDFPages object
 
     """
     # First PDF page
@@ -345,41 +346,52 @@ def two_region_violins(subunit_data, receptor_list, pdf, subunit_pct_diff, subun
     return pdf
 
 
-def two_region_radar(subunit_data, receptor_list, labels, pdf):
+def two_region_radar(receptor_median, labels, pdf):
+    """
+    Create radar plots showing median gene expresion for (a) GABA and Glu subunits, and (b) neuromodulator receptor
+    subunits. Shows two regions on each plot.
 
+    Parameters
+    ----------
+    receptor_median: dictionary
+        Dictionary with dataframes holding subunit receptor medians for each region.
+    labels: list
+        List with the names of each region.
+    pdf: PDFPages object
+        PDF object to add figures to
+
+    Returns
+    -------
+    PDFPages object
+
+    """
     fig = plt.figure()
     gs = gridspec.GridSpec(1, 2)
-    radars = ['mod_radar', 'trans_radar']
-    for rr, region in enumerate(labels):
-        df = receptor_median.loc[:, receptor_list.multisub_radar.values]
-        ax = fig.add_subplot(gs[0, rr])
-
-
-    df = receptor_median.loc[:, receptor_list.multisub_radar.values]
-    subjects = df.index.values
-    subunits = df.columns.values
-    n_subunits = len(subunits)
-
-    angles = [n / float(n_subunits) * 2 * np.pi for n in range(n_subunits)]
-    angles += angles[:1]  # Why is this done??
-
-    fig = plt.figure()
-    ax = fig.add_subplot(111, polar=True)
-    ax.set_theta_offset(np.pi / 2)
-    ax.set_theta_direction(-1)
-    plt.xticks(angles[:-1], receptors, size=7)
-    ax.set_rlabel_position(0)
-    plt.yticks([0, 0.2, 0.4, 0.6, 0.8, 1], ["0,", "0.2", "0.4", "0.6", "0.8", "1"], color="grey", size=6)
-    plt.ylim(0, 1)
-
-    for subject in subjects:
-        values = df.loc[subject, :].values.flatten().tolist()
-    values += values[:1]  # Why is this done??
-    ax.plot(angles, values, linewidth=1, linestyle='solid', label=subject)
-    # ax.fill(angles, values, alpha=0.1)
-
-    # Add legend
-    ax.legend(loc='upper left', bbox_to_anchor=(-0.4, 1), fontsize=7)
+    # One radar for transmitters (GABA+Glu) and one for neuromodulators
+    for tt, radar in enumerate(['trans_radar', 'mod_radar']):
+        # Create plot
+        ax = fig.add_subplot(gs[0, tt], polar=True)
+        ax.set_theta_offset(np.pi / 2)
+        ax.set_theta_direction(-1)
+        ax.set_yticks([0, 0.2, 0.4, 0.6, 0.8, 1], ["0,", "0.2", "0.4", "0.6", "0.8", "1"], color="grey", size=6)
+        ax.set_ylim(0, 1)
+        for rr, region in enumerate(labels):
+            # Get subunit names and values
+            df = receptor_median[region][radar]
+            subunits = df.columns.values
+            n_subunits = len(subunits)
+            values = df.iloc[0, :].values.flatten().tolist()
+            values += values[:1]
+            # Calculate spacing
+            angles = [n / float(n_subunits) * 2 * np.pi for n in range(n_subunits)]
+            angles += angles[:1]
+            # Add to plot
+            ax.set_xticks(angles[:-1], subunits, size=7)
+            ax.set_rlabel_position(0)
+            ax.plot(angles, values, linewidth=1, linestyle='solid', label=region)
+            # Add legend
+            # ax.legend(loc='upper left', bbox_to_anchor=(-0.4, 1), fontsize=7)
+    # Add to pdf
     fig.tight_layout(pad=3.0)
     pdf.savefig(fig)
     plt.close()
@@ -417,6 +429,7 @@ def multisub_prep(subunit_data, subunit, receptor_median):
 
 
 def make_multisub_violin(ax, subunit_exp, subunit, medians, median_dist):
+
     subjects = medians.index.values
     n_subs = len(subjects)
     # Table contents
@@ -480,9 +493,26 @@ def multisub_violin(subunit_data, receptor_list, pdf, receptor_median):
 
 
 def multisub_radar(receptor_median, receptor_list, pdf):
+    """
+    Create radar plot showing median gene expresion for neuromodulator receptor subunits. Shows all subjects on one
+    plot.
+
+    Parameters
+    ----------
+    receptor_median: dictionary
+        Dictionary with dataframes holding subunit receptor medians for each region.
+    receptor_list: list
+        List with the names of each region.
+    pdf: PDFPages object
+        PDF object to add figures to
+
+    Returns
+    -------
+    PDFPages object
+
+    """
     df = receptor_median.loc[:, receptor_list.multisub_radar.values]
     subjects = df.index.values
-    n_subs = len(subjects)
     receptors = df.columns.values
     n_receptors = len(receptors)
 
