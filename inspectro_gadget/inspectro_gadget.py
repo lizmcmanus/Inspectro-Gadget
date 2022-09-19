@@ -19,8 +19,10 @@ from matplotlib.backends.backend_pdf import PdfPages
 
 def gadget(mask_fnames, mask_labels=None, out_root=None, create_overlap=False, bground_fname=None):
     """
-    Main function that runs the analysis. User provides the location(s) of the masks to be used and the relevant output
-    will be produced depending upon whether masks for one region, two regions, or multiple subjects are entered.
+    Main function that runs the analysis.
+
+    User provides the location(s) of the masks to be used and the relevant output will be produced depending
+    upon whether masks for one region, two regions, or multiple subjects are entered.
 
     Parameters
     ----------
@@ -88,6 +90,7 @@ def gadget(mask_fnames, mask_labels=None, out_root=None, create_overlap=False, b
     # Calculate statistics
     if data.multi_subject:
         data.receptor_median = stats.subject_median(data.receptor_data, data.receptor_list)
+        data.overlap_image = stats.subject_overlap(data.mask_images)
         for subject in data.labels:
             data.ex_in_ratio[subject] = stats.ex_in(data.receptor_data[subject], data.receptor_list)
     else:

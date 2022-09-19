@@ -252,3 +252,25 @@ def bootstrap_diff(g1, g2, n_samples=10000, alpha=0.05):
     mDif = np.median(g1_mad)-np.median(g2_mad)
     pctDif = mDif/np.median(g2_mad)*100
     return pctDif, D, Dci
+
+
+def subject_overlap(mask_images):
+    """
+    Calculate the overlap between subject masks. Returns as % overlap.
+
+    Parameters
+    ----------
+    mask_images: dict
+        Dictionary containing all subject mask images
+
+    Returns
+    -------
+    Array with percentage overlaps values
+
+    """
+    subjects = list(mask_images.keys())
+    dims = np.append(mask_images[subjects[0]].shape, len(subjects))
+    overlap = np.zeros(dims)
+    for ss, subject in enumerate(subjects):
+        overlap[:, :, :, ss] = mask_images[subject]
+    return (np.sum(overlap, axis=-1)/len(subjects))*100
