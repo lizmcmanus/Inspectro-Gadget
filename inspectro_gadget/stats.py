@@ -93,6 +93,28 @@ def ex_in(subunit_data, receptor_list):
     return (nmda+ampa)/(gabaa_a+gabaa_b+gabaa_g)
 
 
+def region_median(subunit_data, receptor_list):
+    """
+    Calculate the median gene expression for each subunit for a region.
+
+    Returns a dataframe with subunit name as columns and a single row of median expression values.
+
+    Parameters
+    ----------
+    subunit_data: dict
+        Dictionary containing the region's expression data
+    receptor_list: dataframe
+        Dataframe with all subunit names
+
+    Returns
+    -------
+    Dataframe
+
+    """
+    df = pd.DataFrame(columns=receptor_list.subunit, data=np.nanmedian(subunit_data, axis=0))
+    return df
+
+
 def subject_median(subunit_data, receptor_list):
     """
     Calculate the median gene expression for each subunit per subject.
