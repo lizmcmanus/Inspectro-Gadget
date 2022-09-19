@@ -230,3 +230,4 @@ class GadgetData:
 
         # Inititate common stats variables
         self.ex_in_ratio = {}
+        self.receptor_median = {}
