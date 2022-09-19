@@ -8,7 +8,6 @@ import os
 import nibabel as ni
 import numpy as np
 import pandas as pd
-import inspect
 from copy import deepcopy
 
 
@@ -190,7 +189,7 @@ class GadgetData:
     -----
     """
 
-    def __init__(self, mask_fnames, labels, no_regions, multi_subject=False, no_subjects=1):
+    def __init__(self, mask_fnames, labels, multi_region=False, multi_subject=False, no_subjects=1):
         """
         Initialise data object.
         """
@@ -200,10 +199,7 @@ class GadgetData:
         self.no_regions = deepcopy(no_regions)
         self.no_subjects = deepcopy((no_subjects))
         self.multi_subject = deepcopy(multi_subject)
-        if self.no_regions > 1:
-            self.multi_region = True
-        else:
-            self.multi_region = False
+        self.multi_region = deepcopy(multi_region)
 
         # Load built-in data
         data_dir = '/media/storage2/Inspectro-Gadget/inspectro_gadget/data' ###### Change this!!!

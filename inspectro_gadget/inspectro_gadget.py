@@ -17,20 +17,44 @@ from inspectro_gadget import plotting, stats
 from matplotlib.backends.backend_pdf import PdfPages
 
 
-def inspectro_gadget(mask_fnames, mask_labels=None, in_dir=None, out_root=None, create_overlap=False,
-                     bground_fname=None):
+def gadget(mask_fnames, mask_labels=None, out_root=None, create_overlap=False, bground_fname=None):
+    """
+    Main function that runs the analysis. User provides the location(s) of the masks to be used and the relevant output
+    will be produced depending upon whether masks for one region, two regions, or multiple subjects are entered.
+
+    Parameters
+    ----------
+    mask_fnames: list
+        List containing mask filename(s). If one region then a list with a single string. If two regions then a list
+        with two filenames, each in their own sub-list. If multiple subjects then a list with multiple filenames.
+    mask_labels: list
+        List containing the labels for each mask. Structure follows that used for filenames.
+    out_root: string
+        Directory to which output should be written. If none is given then a new directory will be made in the current
+        working directory.
+    create_overlap: Boolian
+        Whether to create a nifti file with the subject overlap in a multi-subject analysis.
+    bground_fname: string
+        Filename of alternative background image for mask location plots. Must be in MNI152 2mm space.
+
+    Returns
+    -------
+
+    """
 
     # Check mask images are entered as a list
     mask_fnames = is_valid(mask_fnames, list)
     # Count number of regions
     if sum(isinstance(i, list) for i in mask_fnames) == 0:
-        no_regions = 1
+        multi_region = False
     else:
+        multi_region = True
         no_regions = sum(isinstance(i, list) for i in mask_fnames)
+        no_subjects = 1
 
     # Test if there are multiple subjects
     multi_sub = False
-    if no_regions == 1:
+    if not multi_region:
         if len(mask_fnames) > 1:
             multi_sub = True
             no_subjects = len(mask_fnames)
@@ -54,10 +78,8 @@ def inspectro_gadget(mask_fnames, mask_labels=None, in_dir=None, out_root=None, 
         raise IsADirectoryError('Output directory already exists.')
 
     # Collect all required data
-    if multi_sub:
-        data = GadgetData(mask_fnames, mask_labels, no_regions, multi_subject=multi_sub, no_subjects=no_subjects)
-    else:
-        data = GadgetData(mask_fnames, mask_labels, no_regions)
+    data = GadgetData(mask_fnames, mask_labels, multi_region=multi_region, multi_subject=multi_sub,
+                      no_subjects=no_subjects)
 
     # Replace background image if the user provides one
     if bground_fname:
@@ -70,13 +92,13 @@ def inspectro_gadget(mask_fnames, mask_labels=None, in_dir=None, out_root=None, 
             data.ex_in_ratio[subject] = stats.ex_in(data.receptor_data[subject], data.receptor_list)
     else:
         for region in data.labels:
+            data.receptor_median[region] = stats.region_median(data.receptor_data[region], data.receptor_list)
             data.ex_in_ratio[region] = stats.ex_in(data.receptor_data[region], data.receptor_list)
         if data.multi_region:
             data.subunit_d_vals, data.subunit_d_cis, data.subunit_pct_diff, data.subunit_ks_vals = stats.compare_regions(data.receptor_data,
                                                                                                                          data.receptor_list)
-
     # Create output PDF
-    with PdfPages('multipage_pdf.pdf') as pdf:
+    with PdfPages('gadget-output.pdf') as pdf:
         # Mask images
         if data.multi_subject:
             pdf = plotting.plot_masks(data.overlap_image, data.labels, data.bground_image, pdf)
@@ -96,5 +118,5 @@ def inspectro_gadget(mask_fnames, mask_labels=None, in_dir=None, out_root=None, 
         # Radar plots
         if data.multi_subject:
             pdf = plotting.multisub_radar(data.receptor_median, data.receptor_list, pdf)
-
-
+        if data.multi_region:
+            pdf = plotting.two_region_radar(data.receptor_median, data.labels, pdf)
