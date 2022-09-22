@@ -162,8 +162,6 @@ class GadgetData:
             File names for voxel masks
         labels: list
             Labels for the masks
-        no_regions: int
-            The number of regions to be analysed
         multi_subject: bool
             Whether the masks are from multiple subjects or not
         no_subjects: int
@@ -196,7 +194,6 @@ class GadgetData:
         #  Inititate user-defined parameters
         self.mask_fnames = deepcopy(mask_fnames)
         self.labels = deepcopy(labels)
-        self.no_regions = deepcopy(no_regions)
         self.no_subjects = deepcopy((no_subjects))
         self.multi_subject = deepcopy(multi_subject)
         self.multi_region = deepcopy(multi_region)
@@ -218,12 +215,18 @@ class GadgetData:
                 self.mask_images[self.labels[ss]] = load_nifti(self.mask_fnames[ss])
                 self.receptor_data[labels[ss]] = get_receptor_data(self.receptor_list.iloc[:, 0].values,
                                                                        self.mask_images[labels[ss]], data_dir)
-        else:
+        elif self.multi_region:
             for ll, label in enumerate(labels):
-                self.mask_images[label] = load_nifti(self.mask_fnames[ll])
+                self.mask_images[label] = load_nifti(self.mask_fnames[ll][0])
                 self.receptor_data[label] = get_receptor_data(self.receptor_list.iloc[:, 0].values,
                                                               self.mask_images[label], data_dir)
+        else:
+            self.mask_images[labels[0]] = load_nifti(self.mask_fnames[0])
+            self.receptor_data[labels[0]] = get_receptor_data(self.receptor_list.iloc[:, 0].values,
+                                                          self.mask_images[labels[0]], data_dir)
+
 
         # Inititate common stats variables
         self.ex_in_ratio = {}
         self.receptor_median = {}
+        self.overlap_image = {}

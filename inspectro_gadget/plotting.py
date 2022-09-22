@@ -39,16 +39,16 @@ def plot_masks(mask_imgs, labels, bground, pdf):
     fig = plt.figure(tight_layout=True)
     gs = gridspec.GridSpec(no_ax, 3)
     for aa in range(no_ax):
-        cmass = np.round(center_of_mass(mask_imgs[aa]), 0).astype(int)
+        cmass = np.round(center_of_mass(mask_imgs[labels[aa]]), 0).astype(int)
         # Sagittal
-        mask_roi = np.ma.masked_where(mask_imgs[aa][cmass[0], :, :] == 0, mask_imgs[aa][cmass[0], :, :])
+        mask_roi = np.ma.masked_where(mask_imgs[labels[aa]][cmass[0], :, :] == 0, mask_imgs[labels[aa]][cmass[0], :, :])
         ax = fig.add_subplot(gs[aa, 0])
         ax.imshow(bground[cmass[0], :, :].T, cmap='Greys_r', origin='lower', interpolation='none')
         ax.imshow(mask_roi.T, origin='lower', interpolation='none', alpha=0.8)
         ax.set(yticklabels=[], xticklabels=[])  # remove the tick labels
         ax.tick_params(left=False, bottom=False)
         # Coronal
-        mask_roi = np.ma.masked_where(mask_imgs[aa][:, cmass[1], :] == 0, mask_imgs[aa][:, cmass[1], :])
+        mask_roi = np.ma.masked_where(mask_imgs[labels[aa]][:, cmass[1], :] == 0, mask_imgs[labels[aa]][:, cmass[1], :])
         ax = fig.add_subplot(gs[aa, 1])
         ax.imshow(bground[:, cmass[1], :].T, cmap='Greys_r', origin='lower', interpolation='none')
         ax.imshow(mask_roi.T, origin='lower', interpolation='none', alpha=0.8)
@@ -56,7 +56,7 @@ def plot_masks(mask_imgs, labels, bground, pdf):
         ax.tick_params(left=False, bottom=False)
         ax.set_title(labels[aa])
         # Axial
-        mask_roi = np.ma.masked_where(mask_imgs[aa][:, :, cmass[2]] == 0, mask_imgs[aa][:, :, cmass[2]])
+        mask_roi = np.ma.masked_where(mask_imgs[labels[aa]][:, :, cmass[2]] == 0, mask_imgs[labels[aa]][:, :, cmass[2]])
         ax = fig.add_subplot(gs[aa, 2])
         ax.imshow(bground[:, :, cmass[2]].T, cmap='Greys_r', origin='lower', interpolation='none')
         ax.imshow(mask_roi.T, origin='lower', interpolation='none', alpha=0.8)
@@ -250,7 +250,7 @@ def make_two_violins(ax, receptors, group, pcts, ds, ds_ci, kss):
     ax.xaxis.set_minor_locator(minor_locator)
     ax.grid(which='minor', linestyle='-', linewidth='0.01')
     # Add table
-    the_table = table(ax, cellText=cell_text, rowLabels=rows, colLabels=columns, loc='bottom')
+    the_table = table.table(ax, cellText=cell_text, rowLabels=rows, colLabels=columns, loc='bottom')
     the_table.set_fontsize(8)
     the_table.scale(1, 0.7)
     return ax
@@ -346,7 +346,7 @@ def two_region_violins(subunit_data, receptor_list, pdf, subunit_pct_diff, subun
     return pdf
 
 
-def two_region_radar(receptor_median, labels, pdf):
+def two_region_radar(receptor_median, labels, receptor_list, pdf):
     """
     Create radar plots showing median gene expresion for (a) GABA and Glu subunits, and (b) neuromodulator receptor
     subunits. Shows two regions on each plot.
@@ -377,7 +377,7 @@ def two_region_radar(receptor_median, labels, pdf):
         ax.set_ylim(0, 1)
         for rr, region in enumerate(labels):
             # Get subunit names and values
-            df = receptor_median[region][radar]
+            df = receptor_median[region].loc[:, receptor_list[radar].values]
             subunits = df.columns.values
             n_subunits = len(subunits)
             values = df.iloc[0, :].values.flatten().tolist()

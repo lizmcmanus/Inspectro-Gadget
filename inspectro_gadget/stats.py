@@ -101,8 +101,8 @@ def region_median(subunit_data, receptor_list):
 
     Parameters
     ----------
-    subunit_data: dict
-        Dictionary containing the region's expression data
+    subunit_data: array
+        Array containing the region's expression data
     receptor_list: dataframe
         Dataframe with all subunit names
 
@@ -111,7 +111,8 @@ def region_median(subunit_data, receptor_list):
     Dataframe
 
     """
-    df = pd.DataFrame(columns=receptor_list.subunit, data=np.nanmedian(subunit_data, axis=0))
+    medians = np.nanmedian(subunit_data, axis=0).reshape((1, subunit_data.shape[1]))
+    df = pd.DataFrame(columns=receptor_list.subunit.values, data=medians)
     return df
 
 

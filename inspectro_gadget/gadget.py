@@ -12,12 +12,12 @@ GABA and Glutamate regions must ine in a .tsv file "receptors.tsv"
 
 import os
 import time
-from inspectro_gadget.io import GadgetData, load_nifti
+from inspectro_gadget.io import GadgetData, load_nifti, is_valid
 from inspectro_gadget import plotting, stats
 from matplotlib.backends.backend_pdf import PdfPages
 
 
-def gadget(mask_fnames, mask_labels=None, out_root=None, create_overlap=False, bground_fname=None):
+def gadget(mask_fnames, mask_labels=None, out_root=None, bground_fname=None):
     """
     Main function that runs the analysis.
 
@@ -34,13 +34,12 @@ def gadget(mask_fnames, mask_labels=None, out_root=None, create_overlap=False, b
     out_root: string
         Directory to which output should be written. If none is given then a new directory will be made in the current
         working directory.
-    create_overlap: Boolian
-        Whether to create a nifti file with the subject overlap in a multi-subject analysis.
     bground_fname: string
         Filename of alternative background image for mask location plots. Must be in MNI152 2mm space.
 
     Returns
     -------
+    Data object
 
     """
 
@@ -49,6 +48,7 @@ def gadget(mask_fnames, mask_labels=None, out_root=None, create_overlap=False, b
     # Count number of regions
     if sum(isinstance(i, list) for i in mask_fnames) == 0:
         multi_region = False
+        no_subjects = 1
     else:
         multi_region = True
         no_regions = sum(isinstance(i, list) for i in mask_fnames)
@@ -90,7 +90,7 @@ def gadget(mask_fnames, mask_labels=None, out_root=None, create_overlap=False, b
     # Calculate statistics
     if data.multi_subject:
         data.receptor_median = stats.subject_median(data.receptor_data, data.receptor_list)
-        data.overlap_image = stats.subject_overlap(data.mask_images)
+        data.overlap_image['Subject overlap'] = stats.subject_overlap(data.mask_images)
         for subject in data.labels:
             data.ex_in_ratio[subject] = stats.ex_in(data.receptor_data[subject], data.receptor_list)
     else:
@@ -104,13 +104,13 @@ def gadget(mask_fnames, mask_labels=None, out_root=None, create_overlap=False, b
     with PdfPages('gadget-output.pdf') as pdf:
         # Mask images
         if data.multi_subject:
-            pdf = plotting.plot_masks(data.overlap_image, data.labels, data.bground_image, pdf)
+            pdf = plotting.plot_masks(data.overlap_image, ['Subject overlap'], data.bground_image, pdf)
         else:
             pdf = plotting.plot_masks(data.mask_images, data.labels, data.bground_image, pdf)
 
         # Violin plots
         if data.multi_subject:
-            pdf = plotting.multi_sub_violin(data.receptor_data, data.receptor_list, pdf, data.receptor_median)
+            pdf = plotting.multisub_violin(data.receptor_data, data.receptor_list, pdf, data.receptor_median)
         else:
             if data.multi_region:
                 pdf = plotting.two_region_violins(data.receptor_data, data.receptor_list, pdf, data.subunit_pct_diff,
@@ -122,4 +122,5 @@ def gadget(mask_fnames, mask_labels=None, out_root=None, create_overlap=False, b
         if data.multi_subject:
             pdf = plotting.multisub_radar(data.receptor_median, data.receptor_list, pdf)
         if data.multi_region:
-            pdf = plotting.two_region_radar(data.receptor_median, data.labels, pdf)
+            pdf = plotting.two_region_radar(data.receptor_median, data.labels, data.receptor_list, pdf)
+    return data
