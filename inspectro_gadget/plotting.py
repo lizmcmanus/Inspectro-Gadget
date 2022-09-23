@@ -15,7 +15,7 @@ from matplotlib.ticker import AutoMinorLocator
 from scipy.ndimage import center_of_mass
 
 
-def plot_masks(mask_imgs, labels, bground, pdf):
+def plot_masks(mask_imgs, labels, bground, pdf, ex_in=None):
     """
     Show the location of the MRS voxels on a background image.
 
@@ -29,6 +29,9 @@ def plot_masks(mask_imgs, labels, bground, pdf):
         Numpy array with the background image masks should be superimposed upon
     pdf: PDFPages object
         PDF object to add figures to
+    ex_in: dict
+        Estimated excitation/inhibition ratio for each region. Only used for one or two region plots,
+        not multi-subject.
 
     Returns
     -------
@@ -37,7 +40,7 @@ def plot_masks(mask_imgs, labels, bground, pdf):
     """
     no_ax = len(labels)
     fig = plt.figure(tight_layout=True)
-    gs = gridspec.GridSpec(no_ax, 3)
+    gs = gridspec.GridSpec(no_ax, 3, width_ratios=[1, 1, 0.835])
     for aa in range(no_ax):
         cmass = np.round(center_of_mass(mask_imgs[labels[aa]]), 0).astype(int)
         # Sagittal
@@ -54,7 +57,10 @@ def plot_masks(mask_imgs, labels, bground, pdf):
         ax.imshow(mask_roi.T, origin='lower', interpolation='none', alpha=0.8)
         ax.set(yticklabels=[], xticklabels=[])  # remove the tick labels
         ax.tick_params(left=False, bottom=False)
-        ax.set_title(labels[aa])
+        if ex_in:
+            ax.set_title(f'{labels[aa]}\nEstimated excitation/inhibition ratio = {ex_in[labels[aa]]:0.2f}')
+        else:
+            ax.set_title(labels[aa])
         # Axial
         mask_roi = np.ma.masked_where(mask_imgs[labels[aa]][:, :, cmass[2]] == 0, mask_imgs[labels[aa]][:, :, cmass[2]])
         ax = fig.add_subplot(gs[aa, 2])
@@ -421,6 +427,32 @@ def split_subunit_list(subunits, length):
 
 
 def multisub_prep(subunit_data, subunit, receptor_median):
+    """
+    Prepare subunit expression values for a single target subunit for each subject for plotting.
+
+    Removes NaN values and creates list of arrays, one per subject.
+
+    Also calculates the percentage distance from the group median for each subject's median expression value.
+
+    Parameters
+    ----------
+    subunit_data: dict
+        Dictionary with each subject's expression data
+    subunit: str
+        Subunit name
+    receptor_median: dataframe
+        Dataframe with median expression values for each subject.
+
+    Returns
+    -------
+    subunit_exp: list
+        List of dataframes with expression for each subject
+    receptor_median: array
+        Array of median expression values for the target subunit
+    median_dist: array
+        Distance from group median for each subject
+
+    """
     subunit_exp = []
     for subject in receptor_median.index:
         subunit_exp.append(subunit_data[subject].loc[:, subunit].dropna())
@@ -429,6 +461,31 @@ def multisub_prep(subunit_data, subunit, receptor_median):
 
 
 def make_multisub_violin(ax, subunit_exp, subunit, medians, median_dist):
+    """
+
+    Create a subplot with violin plots for each subject for a subunit.
+
+    Also plots subject medians.
+
+    Parameters
+    ----------
+    ax: matplotlib axis
+        The axis to add the plot to
+    subunit_exp: dict
+        Dictionary with subunit expression for each subject
+    subunit: str
+        Subunit name
+    medians: dataframe
+        Dataframe with subjects' median subunit expression values
+    median_dist: list
+        Distance from group median for each subject
+
+    Returns
+    -------
+    ax: matplotlib axis
+        The axis with the plots added
+
+    """
 
     subjects = medians.index.values
     n_subs = len(subjects)

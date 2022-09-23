@@ -12,7 +12,7 @@ GABA and Glutamate regions must ine in a .tsv file "receptors.tsv"
 
 import os
 import time
-from inspectro_gadget.io import GadgetData, load_nifti, is_valid
+from inspectro_gadget.io import GadgetData, load_nifti, is_valid, save_nifti
 from inspectro_gadget import plotting, stats
 from matplotlib.backends.backend_pdf import PdfPages
 
@@ -101,12 +101,12 @@ def gadget(mask_fnames, mask_labels=None, out_root=None, bground_fname=None):
             data.subunit_d_vals, data.subunit_d_cis, data.subunit_pct_diff, data.subunit_ks_vals = stats.compare_regions(data.receptor_data,
                                                                                                                          data.receptor_list)
     # Create output PDF
-    with PdfPages('gadget-output.pdf') as pdf:
+    with PdfPages(os.path.join(out_dir, 'gadget-output.pdf')) as pdf:
         # Mask images
         if data.multi_subject:
             pdf = plotting.plot_masks(data.overlap_image, ['Subject overlap'], data.bground_image, pdf)
         else:
-            pdf = plotting.plot_masks(data.mask_images, data.labels, data.bground_image, pdf)
+            pdf = plotting.plot_masks(data.mask_images, data.labels, data.bground_image, pdf, data.ex_in_ratio)
 
         # Violin plots
         if data.multi_subject:
@@ -123,4 +123,9 @@ def gadget(mask_fnames, mask_labels=None, out_root=None, bground_fname=None):
             pdf = plotting.multisub_radar(data.receptor_median, data.receptor_list, pdf)
         if data.multi_region:
             pdf = plotting.two_region_radar(data.receptor_median, data.labels, data.receptor_list, pdf)
+
+    # Save any other relevant files
+    if data.multi_subject:
+        save_nifti(data.overlap_image['Subject overlap'], data.img_affine, out_dir)
+
     return data
