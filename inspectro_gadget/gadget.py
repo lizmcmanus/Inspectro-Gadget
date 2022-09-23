@@ -13,7 +13,7 @@ GABA and Glutamate regions must ine in a .tsv file "receptors.tsv"
 import os
 import time
 from inspectro_gadget.io import GadgetData, load_nifti, is_valid, save_nifti
-from inspectro_gadget import plotting, stats
+from inspectro_gadget import plotting, stats, io
 from matplotlib.backends.backend_pdf import PdfPages
 
 
@@ -44,7 +44,7 @@ def gadget(mask_fnames, mask_labels=None, out_root=None, bground_fname=None):
     """
 
     # Check mask images are entered as a list
-    mask_fnames = is_valid(mask_fnames, list)
+    mask_fnames = io.is_valid(mask_fnames, list)
     # Count number of regions
     if sum(isinstance(i, list) for i in mask_fnames) == 0:
         multi_region = False
@@ -80,16 +80,17 @@ def gadget(mask_fnames, mask_labels=None, out_root=None, bground_fname=None):
         raise IsADirectoryError('Output directory already exists.')
 
     # Collect all required data
-    data = GadgetData(mask_fnames, mask_labels, multi_region=multi_region, multi_subject=multi_sub,
-                      no_subjects=no_subjects)
+    data = io.GadgetData(mask_fnames, mask_labels, multi_region=multi_region, multi_subject=multi_sub,
+                         no_subjects=no_subjects)
 
     # Replace background image if the user provides one
     if bground_fname:
-        data.bground_image = load_nifti(bground_fname)
+        data.bground_image = io.load_nifti(bground_fname)
 
     # Calculate statistics
     if data.multi_subject:
         data.receptor_median = stats.subject_median(data.receptor_data, data.receptor_list)
+        # Slightly odd way of storing the overlap image so that it can be used directly with the "plot_masks" function.
         data.overlap_image['Subject overlap'] = stats.subject_overlap(data.mask_images)
         for subject in data.labels:
             data.ex_in_ratio[subject] = stats.ex_in(data.receptor_data[subject], data.receptor_list)
@@ -105,6 +106,7 @@ def gadget(mask_fnames, mask_labels=None, out_root=None, bground_fname=None):
         # Mask images
         if data.multi_subject:
             pdf = plotting.plot_masks(data.overlap_image, ['Subject overlap'], data.bground_image, pdf)
+            pdf = plotting.multisub_exin(data.ex_in_ratio, data.labels, pdf)
         else:
             pdf = plotting.plot_masks(data.mask_images, data.labels, data.bground_image, pdf, data.ex_in_ratio)
 
@@ -126,6 +128,7 @@ def gadget(mask_fnames, mask_labels=None, out_root=None, bground_fname=None):
 
     # Save any other relevant files
     if data.multi_subject:
-        save_nifti(data.overlap_image['Subject overlap'], data.img_affine, out_dir)
+        io.save_nifti(data.overlap_image['Subject overlap'], data.img_affine, out_dir)
+        io.save_exin(data.ex_in_ratio, data.labels, out_dir)
 
     return data

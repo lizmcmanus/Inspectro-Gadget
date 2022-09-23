@@ -549,6 +549,26 @@ def multisub_violin(subunit_data, receptor_list, pdf, receptor_median):
     return pdf
 
 
+def multisub_exin(exin_data, labels, pdf):
+    exin = np.zeros(len(exin_data))
+    xs = np.random.uniform(-0.01, 0.01, len(exin_data))
+    fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(3.5, 5), linewidth=0.01)
+    for ss, subject in enumerate(labels):
+        ax.scatter(xs[ss], exin_data[subject], label=labels[ss], s=14)
+        exin[ss] = exin_data[subject]
+    ax.scatter([0], [np.median(exin)], c='black', s=24)
+    ax.set_xlim(-0.1, 0.1)
+    ax.set_ylim(0.5, 1)
+    ax.legend(loc='upper left', fontsize=7)
+    ax.set_xticklabels([])
+    ax.set_xticks([])
+    ax.tick_params(axis='y', which='both', labelsize=8, width=0.5)
+    ax.set_title('Estimated excitation/inhibition ratio', fontsize=10)
+    pdf.savefig(fig)
+    plt.close()
+    return pdf
+
+
 def multisub_radar(receptor_median, receptor_list, pdf):
     """
     Create radar plot showing median gene expresion for neuromodulator receptor subunits. Shows all subjects on one

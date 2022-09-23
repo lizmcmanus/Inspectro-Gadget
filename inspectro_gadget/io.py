@@ -112,6 +112,30 @@ def save_nifti(img, affine, out_dir):
     img.to_filename(os.path.join(out_dir, 'subject-overlap.nii.gz'))
 
 
+def save_exin(exin_data, labels, out_dir):
+    """
+    Save each subject's estimated excitation/inhibition ratio as a CSV file.
+
+    Parameters
+    ----------
+    exin_data: dict
+        Each subject's ex/in data
+    labels: list
+        List of subject labels
+    out_dir: str
+        Directory to save file to
+
+    Returns
+    -------
+
+    """
+    exin = np.zeros(len(exin_data))
+    for ss, subject in enumerate(labels):
+        exin[ss] = exin_data[subject]
+    df = pd.DataFrame(data=exin, index=labels, columns=['Ex_In'])
+    df.to_csv(os.path.join(out_dir, 'subject-excitation-inhibition-ratios.csv'))
+
+
 def extract_mrna(subunit_path, region_mask):
     """
     Extract the mRNA expression values within a mask region and normalise relative to cortical expression through
