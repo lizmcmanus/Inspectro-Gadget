@@ -91,6 +91,27 @@ def load_nifti(fname):
     return img.get_fdata()
 
 
+def save_nifti(img, affine, out_dir):
+    """
+    Save an array as a nifti image. Specifically for saving subject overlap image.
+
+    Parameters
+    ----------
+    img: array
+        Subject overlap values
+    affine: array
+        MNI152 affine matrix
+    out_dir: str
+        Directory to output to
+
+    Returns
+    -------
+
+    """
+    img = ni.Nifti1Image(img, affine)
+    img.to_filename(os.path.join(out_dir, 'subject-overlap.nii.gz'))
+
+
 def extract_mrna(subunit_path, region_mask):
     """
     Extract the mRNA expression values within a mask region and normalise relative to cortical expression through
