@@ -18,6 +18,8 @@ python -m pip install https://github.com/lizmcmanus/Inspectro-Gadget/archive/mai
 ### Single region
 
 ```
+from inspectro_gadget.gadget import gadget
+
 gadget_out =  gadget(['/home/data/region1_mask.nii.gz'],
               mask_labels=['Region 1'],
               out_root='/home/data/results')
