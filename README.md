@@ -17,10 +17,31 @@ python -m pip install https://github.com/lizmcmanus/Inspectro-Gadget/archive/mai
 ## Usage
 ### Single region
 
+```
+gadget_out =  gadget(['/home/data/region1_mask.nii.gz'],
+              mask_labels=['Region 1'],
+              out_root='/home/data/results')
+```
+
 ### Two region comparison
+
+```
+gadget_out = gadget([['/home/data/region1_mask.nii.gz'],
+                    ['/home/data/region2_mask.nii.gz']],
+                    mask_lables=['Region 1', 'Region 2'],
+                    out_root='/home/data/results')
+```
 
 ### Multiple subject comparison
 
+```
+gadget_out = gadget(['/home/data/sub-01_region1_mask.nii.gz',
+                     '/home/data/sub-02_region1_mask.nii.gz',
+                     '/home/data/sub-03_region1_mask.nii.gz',
+                     '/home/data/sub-04_region1_mask.nii.gz'],
+                    mask_labels=['sub-01', 'sub-02', 'sub-03', 'sub-04'],
+                    out_root='/home/data/results')
+```
 
 ## Citing
 When reporting results obtained with the tool please cite the following work:
