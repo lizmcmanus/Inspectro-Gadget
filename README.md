@@ -9,7 +9,7 @@ Gene expression data is obtained from the Allen Human Brain Atlas (https://human
 The package can be installed via pip as follows:
 
 ```
-python -m pip install https://github.com/lizmcmanus/Inspectro-Gadget/archive/main.tar.gz
+pip install https://github.com/lizmcmanus/Inspectro-Gadget/archive/refs/heads/main.zip
 ```
 
 
