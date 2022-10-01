@@ -244,8 +244,7 @@ class GadgetData:
         self.multi_region = deepcopy(multi_region)
 
         # Load built-in data
-        data_dir = '/media/storage2/Inspectro-Gadget/inspectro_gadget/data' ###### Change this!!!
-        #data_dir = os.path.dirname(inspect.getfile(inspectro_gadget))
+        data_dir = os.path.dirname(inspect.getfile(inspectro_gadget))
         self.receptor_list = pd.read_csv(os.path.join(data_dir, 'GroupedReceptors.tsv'), delimiter='\t', header=0)
         tmp_img = ni.load(os.path.join(data_dir, 'MNI152_T1_2mm.nii.gz'))
         self.img_affine = tmp_img.affine

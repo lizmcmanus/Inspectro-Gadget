@@ -12,7 +12,6 @@ GABA and Glutamate regions must ine in a .tsv file "receptors.tsv"
 
 import os
 import time
-from inspectro_gadget.io import GadgetData, load_nifti, is_valid, save_nifti
 from inspectro_gadget import plotting, stats, io
 from matplotlib.backends.backend_pdf import PdfPages
 

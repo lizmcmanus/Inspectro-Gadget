@@ -13,6 +13,8 @@ python -m pip install https://github.com/lizmcmanus/Inspectro-Gadget/archive/mai
 ```
 
 
+### Important limitations
+
 
 ## Usage
 ### Single region
