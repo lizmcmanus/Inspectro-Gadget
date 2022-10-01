@@ -54,4 +54,8 @@ _Inspectro-Gadget_
 
 _Allen Human Brain Atlas_
 
+Hawrylycz, M.J., Lein, E.S., Guillozet-Bongaarts, A.L., Shen, E.H., Ng, L., Miller, J.A., van de Lagemaat, L.N., Smith, K.A., Ebbert, A., Riley, Z.L., Abajian, C., Beckmann, C.F., Bernard, A., Bertagnolli, D., Boe, A.F., Cartagena, P.M., Chakravarty, M.M., Chapin, M., Chong, J., Dalley, R.A. et al. An anatomically comprehensive atlas of the adult human brain transcriptome. Nature, 489(7416):391–399, 2012. doi: 10.1038/nature11405
+
 _Whole-brain gene expression images_
+
+Gryglewski, G., Seiger, R., James, G.M., Godbersen, G.M., Komorowski, A., Unterholzner, J., Michenthaler, P., Hahn, A., Wadsak, W., Mitterhauser, M., Kasper, S. and Lanzenberger, R. Spatial analysis and high resolution mapping of the human whole-brain transcriptome for integrative analysis in neuroimaging. NeuroImage, 176:259–267, 2018. doi: 10.1016/j.neuroimage.2018.04.068.
