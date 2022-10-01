@@ -239,7 +239,7 @@ class GadgetData:
         #  Inititate user-defined parameters
         self.mask_fnames = deepcopy(mask_fnames)
         self.labels = deepcopy(labels)
-        self.no_subjects = deepcopy((no_subjects))
+        self.no_subjects = deepcopy(no_subjects)
         self.multi_subject = deepcopy(multi_subject)
         self.multi_region = deepcopy(multi_region)
 
@@ -269,8 +269,7 @@ class GadgetData:
             self.receptor_data[labels[0]] = get_receptor_data(self.receptor_list.iloc[:, 0].values,
                                                           self.mask_images[labels[0]], data_dir)
 
-
-        # Inititate common stats variables
+        # Initiate common stats variables
         self.ex_in_ratio = {}
         self.receptor_median = {}
         self.overlap_image = {}

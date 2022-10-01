@@ -32,7 +32,7 @@ gadget_out =  gadget(['/home/data/region1_mask.nii.gz'],
 ```
 gadget_out = gadget([['/home/data/region1_mask.nii.gz'],
                     ['/home/data/region2_mask.nii.gz']],
-                    mask_lables=['Region 1', 'Region 2'],
+                    mask_labels=['Region 1', 'Region 2'],
                     out_root='/home/data/results')
 ```
 
