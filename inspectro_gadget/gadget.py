@@ -109,6 +109,12 @@ def gadget(mask_fnames, mask_labels=None, out_root=None, bground_fname=None):
         else:
             pdf = plotting.plot_masks(data.mask_images, data.labels, data.bground_image, pdf, data.ex_in_ratio)
 
+        # Radar plots
+        if data.multi_subject:
+            pdf = plotting.multisub_radar(data.receptor_median, data.receptor_list, pdf)
+        if data.multi_region:
+            pdf = plotting.two_region_radar(data.receptor_median, data.labels, data.receptor_list, pdf)
+
         # Violin plots
         if data.multi_subject:
             pdf = plotting.multisub_violin(data.receptor_data, data.receptor_list, pdf, data.receptor_median)
@@ -118,12 +124,6 @@ def gadget(mask_fnames, mask_labels=None, out_root=None, bground_fname=None):
                                                   data.subunit_d_vals, data.subunit_d_cis, data.subunit_ks_vals)
             else:
                 pdf = plotting.single_region_violins(data.receptor_data[data.labels[0]], data.receptor_list, pdf)
-
-        # Radar plots
-        if data.multi_subject:
-            pdf = plotting.multisub_radar(data.receptor_median, data.receptor_list, pdf)
-        if data.multi_region:
-            pdf = plotting.two_region_radar(data.receptor_median, data.labels, data.receptor_list, pdf)
 
     # Save any other relevant files
     if data.multi_subject:
