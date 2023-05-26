@@ -11,6 +11,7 @@ GABA and Glutamate regions must ine in a .tsv file "receptors.tsv"
 """
 
 import os
+import inspect
 import time
 from inspectro_gadget import plotting, stats, io
 from matplotlib.backends.backend_pdf import PdfPages
@@ -79,7 +80,8 @@ def gadget(mask_fnames, mask_labels=None, out_root=None, bground_fname=None):
         raise IsADirectoryError('Output directory already exists.')
 
     # Collect all required data
-    data = io.GadgetData(mask_fnames, mask_labels, multi_region=multi_region, multi_subject=multi_sub,
+    data_dir = os.path.join(os.path.dirname(inspect.getfile(io)), 'data')
+    data = io.GadgetData(mask_fnames, mask_labels, data_dir, multi_region=multi_region, multi_subject=multi_sub,
                          no_subjects=no_subjects)
 
     # Replace background image if the user provides one
@@ -112,8 +114,8 @@ def gadget(mask_fnames, mask_labels=None, out_root=None, bground_fname=None):
         # Radar plots
         if data.multi_subject:
             pdf = plotting.multisub_radar(data.receptor_median, data.receptor_list, pdf)
-        if data.multi_region:
-            pdf = plotting.two_region_radar(data.receptor_median, data.labels, data.receptor_list, pdf)
+        else:
+            pdf = plotting.region_radar(data.receptor_median, data.labels, data.receptor_list, pdf)
 
         # Violin plots
         if data.multi_subject:

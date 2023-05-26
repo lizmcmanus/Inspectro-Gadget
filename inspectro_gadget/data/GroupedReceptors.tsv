@@ -69,8 +69,8 @@ CHRNA9	ACh_nicotinic	TRUE	FALSE
 CHRNA10	ACh_nicotinic	TRUE	FALSE
 CHRNB2	ACh_nicotinic	TRUE	FALSE
 CHRNB3	ACh_nicotinic	TRUE	FALSE
-CHRNM1	ACh_muscarinic	TRUE	FALSE
-CHRNM2	ACh_muscarinic	TRUE	FALSE
-CHRNM3	ACh_muscarinic	TRUE	FALSE
-CHRNM4	ACh_muscarinic	TRUE	FALSE
-CHRNM5	ACh_muscarinic	TRUE	FALSE
+CHRM1	ACh_muscarinic	TRUE	FALSE
+CHRM2	ACh_muscarinic	TRUE	FALSE
+CHRM3	ACh_muscarinic	TRUE	FALSE
+CHRM4	ACh_muscarinic	TRUE	FALSE
+CHRM5	ACh_muscarinic	TRUE	FALSE

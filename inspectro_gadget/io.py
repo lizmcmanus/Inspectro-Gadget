@@ -4,6 +4,7 @@
 Resources for handling data input, output, and organisation.
 """
 
+import inspect
 import os
 import nibabel as ni
 import numpy as np
@@ -232,7 +233,7 @@ class GadgetData:
     -----
     """
 
-    def __init__(self, mask_fnames, labels, multi_region=False, multi_subject=False, no_subjects=1):
+    def __init__(self, mask_fnames, labels, data_dir, multi_region=False, multi_subject=False, no_subjects=1):
         """
         Initialise data object.
         """
@@ -244,7 +245,7 @@ class GadgetData:
         self.multi_region = deepcopy(multi_region)
 
         # Load built-in data
-        data_dir = os.path.dirname(inspect.getfile(inspectro_gadget))
+        #data_dir = os.path.dirname(inspect.getfile(inspectro_gadget))
         self.receptor_list = pd.read_csv(os.path.join(data_dir, 'GroupedReceptors.tsv'), delimiter='\t', header=0)
         tmp_img = ni.load(os.path.join(data_dir, 'MNI152_T1_2mm.nii.gz'))
         self.img_affine = tmp_img.affine
