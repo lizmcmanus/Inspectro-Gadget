@@ -72,7 +72,7 @@ def plot_masks(mask_imgs, labels, bground, pdf, ex_in=None):
         ax.tick_params(left=False, bottom=False)
         pdf.savefig(fig)
     else:
-        colours = ["#0086a8", "#0086a8"]
+        colours = ["#0086a8", "#a00e00"]
         for aa in range(no_ax):
             cmass = np.round(center_of_mass(mask_imgs[labels[aa]]), 0).astype(int)
             # Sagittal
@@ -172,7 +172,7 @@ def make_single_violin(ax, receptors, group):
     ax: matplotlib axis
         The axis with the plots added
     """
-    sb.violinplot(data=receptors, inner="box", ax=ax, linewidth=0.1, grid_linewidth=1)
+    sb.violinplot(data=receptors, inner="box", ax=ax, linewidth=0.1, grid_linewidth=1, saturation=0.75)
     ax.set_title(group, fontsize=6)
     ax.tick_params(axis='x', which='major', labelsize=6, rotation=45)
     ax.tick_params(axis='y', which='major', labelsize=6)
@@ -291,7 +291,7 @@ def make_two_violins(ax, receptors, group, pcts, ds, ds_ci, kss):
     columns = np.unique(receptors.subunit)
     # Plot data
     sb.violinplot(data=receptors, x='subunit', y='values', hue='region', inner="box",
-                  ax=ax, linewidth=0.1, grid_linewidth=1, palette=["#0086a8", "#0086a8"])
+                  ax=ax, linewidth=0.1, grid_linewidth=1, palette=["#0086a8", "#a00e00"], saturation=0.75)
     ax.set_title(group, fontsize=6)
     ax.tick_params(axis='y', which='both', labelsize=4, width=0.5)
     ax.set_xticklabels([])
@@ -437,7 +437,7 @@ def region_radar(receptor_median, labels, receptor_list, pdf):
     PDFPages object
 
     """
-    colours = ["#0086a8", "#0086a8"]
+    colours = ["#0086a8", "#a00e00"]
     fig = plt.figure()
     gs = gridspec.GridSpec(1, 2)
     # One radar for transmitters (GABA+Glu) and one for neuromodulators
@@ -566,8 +566,12 @@ def make_multisub_violin(ax, subunit_exp, subunit, medians, median_dist):
     columns.append('Median')
     # Plot data
     for ss in range(n_subs):
-        ax.violinplot([subunit_exp[ss]], positions=[ss], showextrema=False)
+        parts = ax.violinplot([subunit_exp[ss]], positions=[ss], showextrema=False)
         ax.scatter(n_subs, medians.iloc[ss], s=18)
+        for pc in parts['bodies']:
+            #pc.set_facecolor('#D43F3A')
+            #pc.set_edgecolor('black')
+            pc.set_alpha(0.75)
     # Add overall median as dot
     ax.scatter(n_subs, np.median(medians), edgecolor='black', facecolor=None, s=24)
     ax.set_title(subunit, fontsize=6)
