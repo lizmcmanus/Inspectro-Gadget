@@ -79,8 +79,10 @@ def gadget(mask_fnames, mask_labels=None, out_root=None, bground_fname=None):
     else:
         raise IsADirectoryError('Output directory already exists.')
 
-    # Collect all required data
+    # Set path where package data is stored
     data_dir = os.path.join(os.path.dirname(inspect.getfile(io)), 'data')
+
+    # Collect all required data
     data = io.GadgetData(mask_fnames, mask_labels, data_dir, multi_region=multi_region, multi_subject=multi_sub,
                          no_subjects=no_subjects)
 
