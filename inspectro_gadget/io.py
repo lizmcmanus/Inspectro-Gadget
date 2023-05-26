@@ -155,7 +155,15 @@ def extract_mrna(subunit_path, region_mask):
         Normalised expression values for all voxels within mask
 
     """
+    # Load image file
     mrna = ni.load(subunit_path).get_fdata()
+
+    # Remove any weird values
+    mrna[mrna < 0] = 0
+    mrna[mrna > 15] = 0
+    mrna[np.isnan(mrna)] = 0
+
+    # Get all non-zero values
     mrna_removed = np.array(mrna[(mrna != 0)])
 
     # interquartile range
