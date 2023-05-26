@@ -149,6 +149,7 @@ def make_single_violin(ax, receptors, group):
 
 def single_region_violins(subunit_data, receptor_list, pdf):
     """
+    Create violin plots for groups of receptors.
 
     Parameters
     ----------
@@ -200,15 +201,29 @@ def single_region_violins(subunit_data, receptor_list, pdf):
     plt.tick_params(bottom=False, top=False, left=False, right=False)
     fig.text(0.015, 0.5, 'Normalised mRNA Expression Value', va='center', ha='center', rotation='vertical', fontsize=12)
     fig.tight_layout(pad=4.0)
-    for rr, receptor in enumerate(['5-HT2', '5-HT3+', 'NAalpha1']):
+    for rr, receptor in enumerate(['5-HT2', '5-HT3+', 'NA_alpha1']):
         axs[0, rr] = make_single_violin(axs[0, rr],
                                         subunit_data[receptor_list.subunit[receptor_list.grouping == receptor].values],
                                         receptor)
-    for rr, receptor in enumerate(['NAalpha2', 'NAbeta']):
+    for rr, receptor in enumerate(['NA_alpha2', 'NA_beta', 'ACh_muscarinic']):
         axs[1, rr] = make_single_violin(axs[1, rr],
                                         subunit_data[receptor_list.subunit[receptor_list.grouping == receptor].values],
                                         receptor)
-    fig.delaxes(axs[1][2])
+    #fig.delaxes(axs[1][2])
+    plt.close()
+    pdf.savefig(fig)
+    # Fourth PDF page
+    fig, axs = plt.subplots(nrows=2, ncols=2, sharex=False, sharey=False, figsize=(10, 7), linewidth=0.01)
+    plt.tick_params(bottom=False, top=False, left=False, right=False)
+    fig.text(0.015, 0.5, 'Normalised mRNA Expression Value', va='center', ha='center', rotation='vertical', fontsize=12)
+    fig.tight_layout(pad=4.0)
+    for rr, receptor in enumerate(['ACh_nicotinic']):
+        axs[0, rr] = make_single_violin(axs[0, rr],
+                                        subunit_data[receptor_list.subunit[receptor_list.grouping == receptor].values],
+                                        receptor)
+    fig.delaxes(axs[0][1])
+    fig.delaxes(axs[1][0])
+    fig.delaxes(axs[1][1])
     plt.close()
     pdf.savefig(fig)
     return pdf
@@ -352,7 +367,7 @@ def two_region_violins(subunit_data, receptor_list, pdf, subunit_pct_diff, subun
     return pdf
 
 
-def two_region_radar(receptor_median, labels, receptor_list, pdf):
+def region_radar(receptor_median, labels, receptor_list, pdf):
     """
     Create radar plots showing median gene expresion for (a) GABA and Glu subunits, and (b) neuromodulator receptor
     subunits. Shows two regions on each plot.
@@ -363,6 +378,8 @@ def two_region_radar(receptor_median, labels, receptor_list, pdf):
         Dictionary with dataframes holding subunit receptor medians for each region.
     labels: list
         List with the names of each region.
+    receptor_list: list
+        List with names of genes
     pdf: PDFPages object
         PDF object to add figures to
 
@@ -392,13 +409,15 @@ def two_region_radar(receptor_median, labels, receptor_list, pdf):
             angles = [n / float(n_subunits) * 2 * np.pi for n in range(n_subunits)]
             angles += angles[:1]
             # Add to plot
-            ax.set_xticks(angles[:-1], subunits, size=7)
+            ax.set_xticks(angles[:-1], subunits)
             ax.set_rlabel_position(0)
             ax.plot(angles, values, linewidth=1, linestyle='solid', label=region)
+            ax.tick_params(axis='x', labelsize=8)
             # Add legend
             # ax.legend(loc='upper left', bbox_to_anchor=(-0.4, 1), fontsize=7)
     # Add to pdf
     fig.tight_layout(pad=3.0)
+    plt.show()
     pdf.savefig(fig)
     plt.close()
     return pdf
@@ -518,6 +537,24 @@ def make_multisub_violin(ax, subunit_exp, subunit, medians, median_dist):
 
 
 def multisub_violin(subunit_data, receptor_list, pdf, receptor_median):
+    """
+    Create violin plots for all genes entered in the case of multiple subject input.
+
+    Parameters
+    ----------
+    subunit_data: dict
+        Dictionary with each subject's expression data
+    receptor_list: list
+        List with the names of each subject
+    pdf: PDFPages object
+        PDF object to add figures to
+    receptor_median: dictionary
+        Dictionary with dataframes holding subunit receptor medians for each region.
+
+    Returns
+    -------
+
+    """
     # Split the receptor list into sublists of six to fit page
     subunit_lists = list(split_subunit_list(receptor_list.loc[receptor_list.multisub_violin, 'subunit'].values, 6))
     # Create plots
@@ -550,6 +587,22 @@ def multisub_violin(subunit_data, receptor_list, pdf, receptor_median):
 
 
 def multisub_exin(exin_data, labels, pdf):
+    """
+    Plot each subject's estimated E:I ratio, along with the group median
+
+    Parameters
+    ----------
+    exin_data: dict
+        Dictionary with E:I values for each subject
+    labels: list
+        List of subject names
+    pdf: PDFPages object
+        PDF object to add figures to
+
+    Returns
+    -------
+
+    """
     exin = np.zeros(len(exin_data))
     xs = np.random.uniform(-0.01, 0.01, len(exin_data))
     fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(3.5, 5), linewidth=0.01)
