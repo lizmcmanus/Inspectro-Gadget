@@ -346,21 +346,38 @@ def two_region_violins(subunit_data, receptor_list, pdf, subunit_pct_diff, subun
     plt.tick_params(bottom=False, top=False, left=False, right=False)
     fig.text(0.015, 0.5, 'Normalised mRNA Expression Value', va='center', ha='center', rotation='vertical', fontsize=12)
     fig.tight_layout(pad=4.0)
-    for rr, receptor in enumerate(['5-HT2', '5-HT3+', 'NAalpha1']):
+    for rr, receptor in enumerate(['5-HT2', '5-HT3+', 'NA_alpha1']):
         # Prepare data
         subunit_exp, receptor, pcts, ds, ds_ci, kss = two_region_prep(subunit_data, receptor_list, receptor,
                                                                       subunit_pct_diff, subunit_d_vals,
                                                                       subunit_d_cis, subunit_ks_vals)
         # Make plot
         axs[0, rr] = make_two_violins(axs[0, rr], subunit_exp, receptor, pcts, ds, ds_ci, kss)
-    for rr, receptor in enumerate(['NAalpha2', 'NAbeta']):
+    for rr, receptor in enumerate(['NA_alpha2', 'NA_beta', 'ACh_muscarinic']):
         # Prepare data
         subunit_exp, receptor, pcts, ds, ds_ci, kss = two_region_prep(subunit_data, receptor_list, receptor,
                                                                       subunit_pct_diff, subunit_d_vals,
                                                                       subunit_d_cis, subunit_ks_vals)
         # Make plot
         axs[1, rr] = make_two_violins(axs[1, rr], subunit_exp, receptor, pcts, ds, ds_ci, kss)
-    fig.delaxes(axs[1][2])
+    fig.tight_layout(pad=3.0)
+    pdf.savefig(fig)
+    plt.close()
+    # Fourth PDF page
+    fig, axs = plt.subplots(nrows=2, ncols=2, sharex=False, sharey=False, figsize=(10, 7), linewidth=0.01)
+    plt.tick_params(bottom=False, top=False, left=False, right=False)
+    fig.text(0.015, 0.5, 'Normalised mRNA Expression Value', va='center', ha='center', rotation='vertical', fontsize=12)
+    fig.tight_layout(pad=4.0)
+    for rr, receptor in enumerate(['ACh_nicotinic']):
+        # Prepare data
+        subunit_exp, receptor, pcts, ds, ds_ci, kss = two_region_prep(subunit_data, receptor_list, receptor,
+                                                                      subunit_pct_diff, subunit_d_vals,
+                                                                      subunit_d_cis, subunit_ks_vals)
+        # Make plot
+        axs[0, rr] = make_two_violins(axs[0, rr], subunit_exp, receptor, pcts, ds, ds_ci, kss)
+    fig.delaxes(axs[0][1])
+    fig.delaxes(axs[1][0])
+    fig.delaxes(axs[1][1])
     fig.tight_layout(pad=3.0)
     pdf.savefig(fig)
     plt.close()
