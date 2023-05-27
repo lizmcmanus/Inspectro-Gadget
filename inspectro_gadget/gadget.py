@@ -17,7 +17,7 @@ from inspectro_gadget import plotting, stats, io
 from matplotlib.backends.backend_pdf import PdfPages
 
 
-def gadget(mask_fnames, mask_labels=None, out_root=None, bground_fname=None):
+def gadget(mask_fnames, mask_labels=None, out_root=None, bground_fname=None, multi_violin=True):
     """
     Main function that runs the analysis.
 
@@ -42,6 +42,8 @@ def gadget(mask_fnames, mask_labels=None, out_root=None, bground_fname=None):
     Data object
 
     """
+
+    print('Starting')
 
     # Check mask images are entered as a list
     mask_fnames = io.is_valid(mask_fnames, list)
@@ -123,7 +125,8 @@ def gadget(mask_fnames, mask_labels=None, out_root=None, bground_fname=None):
 
         # Violin plots
         if data.multi_subject:
-            pdf = plotting.multisub_violin(data.receptor_data, data.receptor_list, pdf, data.receptor_median)
+            if multi_violin:
+                pdf = plotting.multisub_violin(data.receptor_data, data.receptor_list, pdf, data.receptor_median)
         else:
             if data.multi_region:
                 pdf = plotting.two_region_violins(data.receptor_data, data.receptor_list, pdf, data.subunit_pct_diff,
@@ -135,5 +138,5 @@ def gadget(mask_fnames, mask_labels=None, out_root=None, bground_fname=None):
     if data.multi_subject:
         io.save_nifti(data.overlap_image['Subject overlap'], data.img_affine, out_dir)
         io.save_exin(data.ex_in_ratio, data.labels, out_dir)
-
+    print('Finished')
     return data
