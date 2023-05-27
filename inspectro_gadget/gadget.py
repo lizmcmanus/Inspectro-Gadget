@@ -112,7 +112,7 @@ def gadget(mask_fnames, mask_labels=None, out_root=None, bground_fname=None, mul
     with PdfPages(os.path.join(out_dir, 'gadget-output.pdf')) as pdf:
         # Mask images
         if data.multi_subject:
-            pdf = plotting.plot_masks(data.overlap_image, ['Subject overlap'], data.bground_image, pdf)
+            pdf = plotting.plot_overlap(data.overlap_image['Subject overlap'], ['Subject overlap'], data.bground_image, pdf)
             pdf = plotting.multisub_exin(data.ex_in_ratio, data.labels, pdf)
         else:
             pdf = plotting.plot_masks(data.mask_images, data.labels, data.bground_image, pdf, data.ex_in_ratio)
