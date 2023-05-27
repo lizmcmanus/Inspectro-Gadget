@@ -15,6 +15,8 @@ from matplotlib import table
 from matplotlib.ticker import AutoMinorLocator
 from scipy.ndimage import center_of_mass
 
+# Colours to use for plots
+colours = ["#528fad", "#f7aa58", "#aadce0"]
 
 def plot_masks(mask_imgs, labels, bground, pdf, ex_in=None):
     """
@@ -39,7 +41,7 @@ def plot_masks(mask_imgs, labels, bground, pdf, ex_in=None):
     Figure object
 
     """
-
+    #colours = ["#0086a8", "#a00e00"]
     no_ax = len(labels)
     fig = plt.figure(tight_layout=True)
     gs = gridspec.GridSpec(no_ax, 3, width_ratios=[1, 1, 0.835])
@@ -49,14 +51,14 @@ def plot_masks(mask_imgs, labels, bground, pdf, ex_in=None):
         mask_roi = np.ma.masked_where(mask_imgs[labels[0]][cmass[0], :, :] == 0, mask_imgs[labels[0]][cmass[0], :, :])
         ax = fig.add_subplot(gs[0, 0])
         ax.imshow(bground[cmass[0], :, :].T, cmap='Greys_r', origin='lower', interpolation='none')
-        ax.imshow(mask_roi.T, origin='lower', interpolation='none', alpha=0.8)
+        ax.imshow(mask_roi.T, origin='lower', interpolation='none', alpha=0.8, cmap=colors.ListedColormap([colours[0]]))
         ax.set(yticklabels=[], xticklabels=[])  # remove the tick labels
         ax.tick_params(left=False, bottom=False)
         # Coronal
         mask_roi = np.ma.masked_where(mask_imgs[labels[0]][:, cmass[1], :] == 0, mask_imgs[labels[0]][:, cmass[1], :])
         ax = fig.add_subplot(gs[0, 1])
         ax.imshow(bground[:, cmass[1], :].T, cmap='Greys_r', origin='lower', interpolation='none')
-        ax.imshow(mask_roi.T, origin='lower', interpolation='none', alpha=0.8)
+        ax.imshow(mask_roi.T, origin='lower', interpolation='none', alpha=0.8, cmap=colors.ListedColormap([colours[0]]))
         ax.set(yticklabels=[], xticklabels=[])  # remove the tick labels
         ax.tick_params(left=False, bottom=False)
         if ex_in:
@@ -67,12 +69,11 @@ def plot_masks(mask_imgs, labels, bground, pdf, ex_in=None):
         mask_roi = np.ma.masked_where(mask_imgs[labels[0]][:, :, cmass[2]] == 0, mask_imgs[labels[0]][:, :, cmass[2]])
         ax = fig.add_subplot(gs[0, 2])
         ax.imshow(bground[:, :, cmass[2]].T, cmap='Greys_r', origin='lower', interpolation='none')
-        ax.imshow(mask_roi.T, origin='lower', interpolation='none', alpha=0.8)
+        ax.imshow(mask_roi.T, origin='lower', interpolation='none', alpha=0.8, cmap=colors.ListedColormap([colours[0]]))
         ax.set(yticklabels=[], xticklabels=[])  # remove the tick labels
         ax.tick_params(left=False, bottom=False)
         pdf.savefig(fig)
     else:
-        colours = ["#0086a8", "#a00e00"]
         for aa in range(no_ax):
             cmass = np.round(center_of_mass(mask_imgs[labels[aa]]), 0).astype(int)
             # Sagittal
@@ -131,14 +132,14 @@ def plot_overlap(overlap, labels, bground, pdf):
     mask_roi = np.ma.masked_where(overlap[cmass[0], :, :] == 0, overlap[cmass[0], :, :])
     ax = fig.add_subplot(gs[0, 0])
     ax.imshow(bground[cmass[0], :, :].T, cmap='Greys_r', origin='lower', interpolation='none')
-    ax.imshow(mask_roi.T, origin='lower', interpolation='none', alpha=0.8)
+    ax.imshow(mask_roi.T, origin='lower', interpolation='none', alpha=0.8, cmap='plasma')
     ax.set(yticklabels=[], xticklabels=[])  # remove the tick labels
     ax.tick_params(left=False, bottom=False)
     # Coronal
     mask_roi = np.ma.masked_where(overlap[:, cmass[1], :] == 0, overlap[:, cmass[1], :])
     ax = fig.add_subplot(gs[0, 1])
     ax.imshow(bground[:, cmass[1], :].T, cmap='Greys_r', origin='lower', interpolation='none')
-    ax.imshow(mask_roi.T, origin='lower', interpolation='none', alpha=0.8)
+    ax.imshow(mask_roi.T, origin='lower', interpolation='none', alpha=0.8, cmap='plasma')
     ax.set(yticklabels=[], xticklabels=[])  # remove the tick labels
     ax.tick_params(left=False, bottom=False)
     ax.set_title(labels[0])
@@ -146,7 +147,7 @@ def plot_overlap(overlap, labels, bground, pdf):
     mask_roi = np.ma.masked_where(overlap[:, :, cmass[2]] == 0, overlap[:, :, cmass[2]])
     ax = fig.add_subplot(gs[0, 2])
     ax.imshow(bground[:, :, cmass[2]].T, cmap='Greys_r', origin='lower', interpolation='none')
-    ax.imshow(mask_roi.T, origin='lower', interpolation='none', alpha=0.8)
+    ax.imshow(mask_roi.T, origin='lower', interpolation='none', alpha=0.8, cmap='plasma')
     ax.set(yticklabels=[], xticklabels=[])  # remove the tick labels
     ax.tick_params(left=False, bottom=False)
     pdf.savefig(fig)
@@ -172,7 +173,7 @@ def make_single_violin(ax, receptors, group):
     ax: matplotlib axis
         The axis with the plots added
     """
-    sb.violinplot(data=receptors, inner="box", ax=ax, linewidth=0.1, grid_linewidth=1, saturation=0.75)
+    sb.violinplot(data=receptors, inner="box", ax=ax, linewidth=0.1, grid_linewidth=1, saturation=0.6, color=colours[2])
     ax.set_title(group, fontsize=6)
     ax.tick_params(axis='x', which='major', labelsize=6, rotation=45)
     ax.tick_params(axis='y', which='major', labelsize=6)
@@ -291,7 +292,7 @@ def make_two_violins(ax, receptors, group, pcts, ds, ds_ci, kss):
     columns = np.unique(receptors.subunit)
     # Plot data
     sb.violinplot(data=receptors, x='subunit', y='values', hue='region', inner="box",
-                  ax=ax, linewidth=0.1, grid_linewidth=1, palette=["#0086a8", "#a00e00"], saturation=0.75)
+                  ax=ax, linewidth=0.1, grid_linewidth=1, palette=colours[:2], saturation=0.6)
     ax.set_title(group, fontsize=6)
     ax.tick_params(axis='y', which='both', labelsize=4, width=0.5)
     ax.set_xticklabels([])
@@ -437,7 +438,7 @@ def region_radar(receptor_median, labels, receptor_list, pdf):
     PDFPages object
 
     """
-    colours = ["#0086a8", "#a00e00"]
+    #colours = ["#0086a8", "#a00e00"]
     #fig = plt.figure()
     #gs = gridspec.GridSpec(1, 2)
     # One radar for transmitters (GABA+Glu) and one for neuromodulators
@@ -460,12 +461,12 @@ def region_radar(receptor_median, labels, receptor_list, pdf):
             angles = [n / float(n_subunits) * 2 * np.pi for n in range(n_subunits)]
             angles += angles[:1]
             # Add to plot
-            ax.set_xticks(angles[:-1], subunits)
+            ax.set_xticks(angles[:-1], subunits, size=7)
             ax.set_rlabel_position(0)
             ax.plot(angles, values, linewidth=1, linestyle='solid', label=region, c=colours[rr])
             ax.tick_params(axis='x', labelsize=8)
             # Add legend
-            # ax.legend(loc='upper left', bbox_to_anchor=(-0.4, 1), fontsize=7)
+            ax.legend(loc='upper left', bbox_to_anchor=(-0.4, 1), fontsize=10)
     # Add to pdf
         fig.tight_layout(pad=3.0)
         plt.show()
@@ -559,6 +560,8 @@ def make_multisub_violin(ax, subunit_exp, subunit, medians, median_dist):
 
     subjects = medians.index.values
     n_subs = len(subjects)
+    # Create a colour map
+    colour_map = colors.LinearSegmentedColormap.from_list('cmap', ["#e76254", "#ef8a47", "#f7aa58", "#ffd06f", "#ffe6b7", "#aadce0", "#72bcd5", "#528fad", "#376795", "#1e466e"], N=n_subs)
     # Table contents
     rows = ['% from\nmedian']
     cell_text = [[f'{dist:0.2f}' for dist in median_dist]]
@@ -568,9 +571,9 @@ def make_multisub_violin(ax, subunit_exp, subunit, medians, median_dist):
     # Plot data
     for ss in range(n_subs):
         parts = ax.violinplot([subunit_exp[ss]], positions=[ss], showextrema=False)
-        ax.scatter(n_subs, medians.iloc[ss], s=18)
+        ax.scatter(n_subs, medians.iloc[ss], s=18, color=colour_map(ss), alpha=0.75)
         for pc in parts['bodies']:
-            #pc.set_facecolor('#D43F3A')
+            pc.set_facecolor(colour_map(ss))
             #pc.set_edgecolor('black')
             pc.set_alpha(0.75)
     # Add overall median as dot
@@ -663,11 +666,17 @@ def multisub_exin(exin_data, labels, pdf):
     -------
 
     """
+    # Define colourmap
+    colour_map = colors.LinearSegmentedColormap.from_list('cmap',
+                                                          ["#e76254", "#ef8a47", "#f7aa58", "#ffd06f", "#ffe6b7",
+                                                           "#aadce0", "#72bcd5", "#528fad", "#376795", "#1e466e"],
+                                                          N=len(labels))
+
     exin = np.zeros(len(exin_data))
     xs = np.random.uniform(-0.01, 0.01, len(exin_data))
     fig, ax = plt.subplots(nrows=1, ncols=1, figsize=(3.5, 5), linewidth=0.01)
     for ss, subject in enumerate(labels):
-        ax.scatter(xs[ss], exin_data[subject], label=labels[ss], s=14)
+        ax.scatter(xs[ss], exin_data[subject], label=labels[ss], s=14, color=colour_map(ss))
         exin[ss] = exin_data[subject]
     ax.scatter([0], [np.median(exin)], c='black', s=24)
     ax.set_xlim(-0.1, 0.1)
@@ -707,9 +716,17 @@ def multisub_radar(receptor_median, receptor_list, pdf):
     receptors = df.columns.values
     n_receptors = len(receptors)
 
+    # Define colourmap
+    colour_map = colors.LinearSegmentedColormap.from_list('cmap',
+                                                          ["#e76254", "#ef8a47", "#f7aa58", "#ffd06f", "#ffe6b7",
+                                                           "#aadce0", "#72bcd5", "#528fad", "#376795", "#1e466e"],
+                                                          N=len(subjects))
+
+    # Space points around circle
     angles = [n / float(n_receptors) * 2 * np.pi for n in range(n_receptors)]
     angles += angles[:1]  # Why is this done??
 
+    # Make plot
     fig = plt.figure()
     ax = fig.add_subplot(111, polar=True)
     ax.set_theta_offset(np.pi / 2)
@@ -719,14 +736,14 @@ def multisub_radar(receptor_median, receptor_list, pdf):
     plt.yticks([0, 0.2, 0.4, 0.6, 0.8, 1], ["0,", "0.2", "0.4", "0.6", "0.8", "1"], color="grey", size=6)
     plt.ylim(0, 1)
 
-    for subject in subjects:
+    for ss, subject in enumerate(subjects):
         values = df.loc[subject, :].values.flatten().tolist()
         values += values[:1]  # Why is this done??
-        ax.plot(angles, values, linewidth=1, linestyle='solid', label=subject)
+        ax.plot(angles, values, color=colour_map(ss), linewidth=1, linestyle='solid', label=subject)
         #ax.fill(angles, values, alpha=0.1)
 
     # Add legend
-    ax.legend(loc='upper left', bbox_to_anchor=(-0.4, 1), fontsize=7)
+    ax.legend(loc='upper left', bbox_to_anchor=(-0.4, 1), fontsize=10)
     fig.tight_layout(pad=3.0)
     pdf.savefig(fig)
     plt.close()
@@ -737,6 +754,7 @@ def multisub_radar(receptor_median, receptor_list, pdf):
     receptors = df.columns.values
     n_receptors = len(receptors)
 
+    # Space points around circle
     angles = [n / float(n_receptors) * 2 * np.pi for n in range(n_receptors)]
     angles += angles[:1]  # Why is this done??
 
@@ -749,14 +767,14 @@ def multisub_radar(receptor_median, receptor_list, pdf):
     plt.yticks([0, 0.2, 0.4, 0.6, 0.8, 1], ["0,", "0.2", "0.4", "0.6", "0.8", "1"], color="grey", size=6)
     plt.ylim(0, 1)
 
-    for subject in subjects:
+    for ss, subject in enumerate(subjects):
         values = df.loc[subject, :].values.flatten().tolist()
         values += values[:1]  # Why is this done??
-        ax.plot(angles, values, linewidth=1, linestyle='solid', label=subject)
+        ax.plot(angles, values, color=colour_map(ss), linewidth=1, linestyle='solid', label=subject)
         #ax.fill(angles, values, alpha=0.1)
 
     # Add legend
-    ax.legend(loc='upper left', bbox_to_anchor=(-0.4, 1), fontsize=7)
+    ax.legend(loc='upper left', bbox_to_anchor=(-0.4, 1), fontsize=10)
     fig.tight_layout(pad=3.0)
     pdf.savefig(fig)
     plt.close()
