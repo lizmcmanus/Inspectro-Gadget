@@ -174,6 +174,7 @@ def make_single_violin(ax, receptors, group):
         The axis with the plots added
     """
     sb.violinplot(data=receptors, inner="box", ax=ax, linewidth=0.1, grid_linewidth=1, saturation=0.6, color=colours[2])
+    ax.set_ylim(0, 1.05)
     ax.set_title(group, fontsize=6)
     ax.tick_params(axis='x', which='major', labelsize=6, rotation=45)
     ax.tick_params(axis='y', which='major', labelsize=6)
@@ -293,6 +294,7 @@ def make_two_violins(ax, receptors, group, pcts, ds, ds_ci, kss):
     # Plot data
     sb.violinplot(data=receptors, x='subunit', y='values', hue='region', inner="box",
                   ax=ax, linewidth=0.1, grid_linewidth=1, palette=colours[:2], saturation=0.6)
+    ax.set_ylim(0, 1.05)
     ax.set_title(group, fontsize=6)
     ax.tick_params(axis='y', which='both', labelsize=4, width=0.5)
     ax.set_xticklabels([])
@@ -578,6 +580,7 @@ def make_multisub_violin(ax, subunit_exp, subunit, medians, median_dist):
             pc.set_alpha(0.75)
     # Add overall median as dot
     ax.scatter(n_subs, np.median(medians), edgecolor='black', facecolor=None, s=24)
+    ax.set_ylim(0, 1.05)
     ax.set_title(subunit, fontsize=6)
     ax.tick_params(axis='y', which='both', labelsize=4, width=0.5)
     ax.set_xticklabels([])
