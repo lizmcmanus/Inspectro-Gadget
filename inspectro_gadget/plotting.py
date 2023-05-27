@@ -438,12 +438,13 @@ def region_radar(receptor_median, labels, receptor_list, pdf):
 
     """
     colours = ["#0086a8", "#a00e00"]
-    fig = plt.figure()
-    gs = gridspec.GridSpec(1, 2)
+    #fig = plt.figure()
+    #gs = gridspec.GridSpec(1, 2)
     # One radar for transmitters (GABA+Glu) and one for neuromodulators
     for tt, radar in enumerate(['trans_radar', 'mod_radar']):
         # Create plot
-        ax = fig.add_subplot(gs[0, tt], polar=True)
+        fig = plt.figure()
+        ax = fig.add_subplot(111, polar=True)
         ax.set_theta_offset(np.pi / 2)
         ax.set_theta_direction(-1)
         ax.set_yticks([0, 0.2, 0.4, 0.6, 0.8, 1], ["0,", "0.2", "0.4", "0.6", "0.8", "1"], color="grey", size=6)
@@ -466,10 +467,10 @@ def region_radar(receptor_median, labels, receptor_list, pdf):
             # Add legend
             # ax.legend(loc='upper left', bbox_to_anchor=(-0.4, 1), fontsize=7)
     # Add to pdf
-    fig.tight_layout(pad=3.0)
-    plt.show()
-    pdf.savefig(fig)
-    plt.close()
+        fig.tight_layout(pad=3.0)
+        plt.show()
+        pdf.savefig(fig)
+        plt.close()
     return pdf
 
 
