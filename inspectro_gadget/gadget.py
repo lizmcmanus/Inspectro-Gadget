@@ -91,6 +91,7 @@ def gadget(mask_fnames, mask_labels=None, out_root=None, bground_fname=None):
         data.bground_image = io.load_nifti(bground_fname)
 
     # Calculate statistics
+    print('Estimating gene expression statistics')
     if data.multi_subject:
         data.receptor_median = stats.subject_median(data.receptor_data, data.receptor_list)
         # Slightly odd way of storing the overlap image so that it can be used directly with the "plot_masks" function.
@@ -105,6 +106,7 @@ def gadget(mask_fnames, mask_labels=None, out_root=None, bground_fname=None):
             data.subunit_d_vals, data.subunit_d_cis, data.subunit_pct_diff, data.subunit_ks_vals = stats.compare_regions(data.receptor_data,
                                                                                                                          data.receptor_list)
     # Create output PDF
+    print('Plotting results')
     with PdfPages(os.path.join(out_dir, 'gadget-output.pdf')) as pdf:
         # Mask images
         if data.multi_subject:

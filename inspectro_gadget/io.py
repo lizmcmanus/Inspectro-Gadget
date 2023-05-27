@@ -270,10 +270,12 @@ class GadgetData:
                                                                        self.mask_images[labels[ss]], data_dir)
         elif self.multi_region:
             for ll, label in enumerate(labels):
+                print(f'Loading data for region {label}')
                 self.mask_images[label] = load_nifti(self.mask_fnames[ll][0])
                 self.receptor_data[label] = get_receptor_data(self.receptor_list.iloc[:, 0].values,
                                                               self.mask_images[label], data_dir)
         else:
+            print(f'Loading data for region {labels[0]}')
             self.mask_images[labels[0]] = load_nifti(self.mask_fnames[0])
             self.receptor_data[labels[0]] = get_receptor_data(self.receptor_list.iloc[:, 0].values,
                                                           self.mask_images[labels[0]], data_dir)
