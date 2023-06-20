@@ -173,7 +173,7 @@ def make_single_violin(ax, receptors, group):
     ax: matplotlib axis
         The axis with the plots added
     """
-    sb.violinplot(data=receptors, inner="box", ax=ax, linewidth=0.1, grid_linewidth=1, saturation=0.6, color=colours[2])
+    sb.violinplot(data=receptors, inner="box", ax=ax, linewidth=0.1, grid_linewidth=1, saturation=0.6, color=colours[0])
     ax.set_ylim(0, 1.05)
     ax.set_title(group, fontsize=6)
     ax.tick_params(axis='x', which='major', labelsize=6, rotation=45)
@@ -307,7 +307,8 @@ def make_two_violins(ax, receptors, group, pcts, ds, ds_ci, kss):
     ax.grid(which='minor', linestyle='-', linewidth='0.01')
     # Add table
     the_table = table.table(ax, cellText=cell_text, rowLabels=rows, colLabels=columns, loc='bottom')
-    the_table.set_fontsize(8)
+    the_table.auto_set_font_size(False)
+    the_table.set_fontsize(2.9)
     the_table.scale(1, 0.7)
     return ax
 
