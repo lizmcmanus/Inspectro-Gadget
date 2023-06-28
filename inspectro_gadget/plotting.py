@@ -451,7 +451,7 @@ def region_radar(receptor_median, labels, receptor_list, pdf):
         ax = fig.add_subplot(111, polar=True)
         ax.set_theta_offset(np.pi / 2)
         ax.set_theta_direction(-1)
-        ax.set_yticks([0, 0.2, 0.4, 0.6, 0.8, 1], ["0,", "0.2", "0.4", "0.6", "0.8", "1"], color="grey", size=6)
+        ax.set_yticks([0, 0.2, 0.4, 0.6, 0.8, 1], ["0,", "0.2", "0.4", "0.6", "0.8", "1"], color="black", size=5)
         ax.set_ylim(0, 1)
         for rr, region in enumerate(labels):
             # Get subunit names and values
@@ -467,9 +467,9 @@ def region_radar(receptor_median, labels, receptor_list, pdf):
             ax.set_xticks(angles[:-1], subunits, size=7)
             ax.set_rlabel_position(0)
             ax.plot(angles, values, linewidth=1, linestyle='solid', label=region, c=colours[rr])
-            ax.tick_params(axis='x', labelsize=8)
+            ax.tick_params(axis='x', labelsize=4)
             # Add legend
-            ax.legend(loc='upper left', bbox_to_anchor=(-0.4, 1), fontsize=10)
+            ax.legend(loc='upper left', bbox_to_anchor=(-0.6, 1), fontsize=10)
     # Add to pdf
         fig.tight_layout(pad=3.0)
         plt.show()
@@ -735,9 +735,9 @@ def multisub_radar(receptor_median, receptor_list, pdf):
     ax = fig.add_subplot(111, polar=True)
     ax.set_theta_offset(np.pi / 2)
     ax.set_theta_direction(-1)
-    plt.xticks(angles[:-1], receptors, size=7)
+    plt.xticks(angles[:-1], receptors, size=4)
     ax.set_rlabel_position(0)
-    plt.yticks([0, 0.2, 0.4, 0.6, 0.8, 1], ["0,", "0.2", "0.4", "0.6", "0.8", "1"], color="grey", size=6)
+    plt.yticks([0, 0.2, 0.4, 0.6, 0.8, 1], ["0,", "0.2", "0.4", "0.6", "0.8", "1"], color="black", size=5)
     plt.ylim(0, 1)
 
     for ss, subject in enumerate(subjects):
@@ -747,7 +747,7 @@ def multisub_radar(receptor_median, receptor_list, pdf):
         #ax.fill(angles, values, alpha=0.1)
 
     # Add legend
-    ax.legend(loc='upper left', bbox_to_anchor=(-0.4, 1), fontsize=10)
+    ax.legend(loc='upper left', bbox_to_anchor=(-0.6, 1), fontsize=10)
     fig.tight_layout(pad=3.0)
     pdf.savefig(fig)
     plt.close()
@@ -766,9 +766,9 @@ def multisub_radar(receptor_median, receptor_list, pdf):
     ax = fig.add_subplot(111, polar=True)
     ax.set_theta_offset(np.pi / 2)
     ax.set_theta_direction(-1)
-    plt.xticks(angles[:-1], receptors, size=7)
+    plt.xticks(angles[:-1], receptors, size=4)
     ax.set_rlabel_position(0)
-    plt.yticks([0, 0.2, 0.4, 0.6, 0.8, 1], ["0,", "0.2", "0.4", "0.6", "0.8", "1"], color="grey", size=6)
+    plt.yticks([0, 0.2, 0.4, 0.6, 0.8, 1], ["0,", "0.2", "0.4", "0.6", "0.8", "1"], color="black", size=5)
     plt.ylim(0, 1)
 
     for ss, subject in enumerate(subjects):
@@ -778,7 +778,7 @@ def multisub_radar(receptor_median, receptor_list, pdf):
         #ax.fill(angles, values, alpha=0.1)
 
     # Add legend
-    ax.legend(loc='upper left', bbox_to_anchor=(-0.4, 1), fontsize=10)
+    ax.legend(loc='upper left', bbox_to_anchor=(-0.6, 1), fontsize=10)
     fig.tight_layout(pad=3.0)
     pdf.savefig(fig)
     plt.close()
