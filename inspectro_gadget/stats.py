@@ -47,18 +47,26 @@ def compare_regions(subunit_data, receptor_list, n_samples=5000):
             # Get data and remove NaNs
             region_one = subunit_data[region_names[0]][subunit].values
             region_two = subunit_data[region_names[1]][subunit].values
-            region_one = region_one[~np.isnan(region_one)]
-            region_two = region_two[~np.isnan(region_two)]
-            # Compare subunit values
-            subunit_pct_diff[subunit], subunit_d_vals[subunit], subunit_d_cis[subunit] = bootstrap_diff(region_one,
-                                                                                                        region_two,
-                                                                                                        n_samples=n_samples,
-                                                                                                        alpha=alpha)
-            # Mean centre for KS test
-            region_one = region_one - np.mean(region_one)
-            region_two = region_two - np.mean(region_two)
-            # Apply KS test
-            subunit_ks_vals[subunit] = kstest(region_one, region_two,  alternative='two-sided', mode='auto').statistic
+            if np.isnan(region_one).all() or np.isnan(region_two).all():
+                subunit_pct_diff[subunit], subunit_d_vals[subunit], subunit_d_cis[subunit] = [0, 0, [0, 0]]
+                subunit_ks_vals[subunit] = 0
+                if np.isnan(region_one).all():
+                    print(f'No {subunit} expression values in {region_names[0]}')
+                else:
+                    print(f'No {subunit} expression values in {region_names[1]}')
+            else:
+                region_one = region_one[~np.isnan(region_one)]
+                region_two = region_two[~np.isnan(region_two)]
+                # Compare subunit values
+                subunit_pct_diff[subunit], subunit_d_vals[subunit], subunit_d_cis[subunit] = bootstrap_diff(region_one,
+                                                                                                            region_two,
+                                                                                                            n_samples=n_samples,
+                                                                                                            alpha=alpha)
+                # Mean centre for KS test
+                region_one = region_one - np.mean(region_one)
+                region_two = region_two - np.mean(region_two)
+                # Apply KS test
+                subunit_ks_vals[subunit] = kstest(region_one, region_two,  alternative='two-sided', mode='auto').statistic
     return subunit_d_vals, subunit_d_cis, subunit_pct_diff, subunit_ks_vals
 
 
@@ -112,6 +120,7 @@ def region_median(subunit_data, receptor_list):
 
     """
     medians = np.nanmedian(subunit_data, axis=0).reshape((1, subunit_data.shape[1]))
+    medians[np.isnan(medians)] = 0
     df = pd.DataFrame(columns=receptor_list.subunit.values, data=medians)
     return df
 
