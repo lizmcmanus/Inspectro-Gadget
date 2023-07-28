@@ -323,7 +323,8 @@ def two_region_prep(subunit_data, receptor_list, receptor, subunit_pct_diff, sub
             df['subunit'] = subunit
             df['region'] = region
             subunit_exp = pd.concat((subunit_exp, df), axis=0)
-    subunit_exp = subunit_exp.fillna(0)
+    #subunit_exp = subunit_exp.fillna(0)
+    subunit_exp = subunit_exp.dropna()
     # Arrange stats
     pcts = [subunit_pct_diff[subunit] for subunit in receptor_list.subunit[receptor_list.grouping == receptor].values]
     ds = [subunit_d_vals[subunit] for subunit in receptor_list.subunit[receptor_list.grouping == receptor].values]
