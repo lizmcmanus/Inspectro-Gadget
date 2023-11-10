@@ -80,9 +80,23 @@ gadget_out = gadget(['/home/data/sub-01_region1_mask.nii.gz',
                     out_root='/home/data/results')
 ```
 
-The report will include a variety of informationoverlap between participant masks.
+The report will include a variety of information:
+
+- An image showing the overlap between participant masks
 
 ![Brain slices showing overlap between the participant masks.](images/multi-overlap.png?raw=true "Multiple participant mask overlap image")
+
+- Estimates excitation/inhibition ratios for each participant's mask (and a group average value)
+
+- ![Excitation/inhibition ratio estimates for each participant.](images/multi-eiratio.png?raw=true "Multiple participant excitation/inhibition ratios")
+
+- Radarplots showing the receptor fingerprints for each participant's mask. Separate ones are plotted for GABA+glutanate genes and for neuromodulators
+
+![Radarplots showing receptor fingerprints for participants.](images/multi-radars.png?raw=true "Multiple participant receptor fingerprints")
+
+- Violinplots showing the range of gene expression within each participant's mask for each of the included genes. How far each participant mask's distribution median is from the group average is also provided
+
+![Example violinplots showing expression levels for each of the included genes. A set of AMPA receptor genes are shown for illustration.](images/multi-violins.png?raw=true "Individual expression estimates for a set of AMPA receptor genes")
 
 ### Important limitations
 The Allen Human Brain Atlas data comes from six people, five of whom were male. Their ages ranged from 24 to 57 years. As brain morphology and gene expression can differ between the sexes and across the lifespan, the dataset may not be fully representative of the human population. As such, the results produced by this tool should be interpreted with these limitations in mind. 
