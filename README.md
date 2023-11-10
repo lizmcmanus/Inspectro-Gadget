@@ -39,10 +39,12 @@ The package can be installed via pip as follows:
 pip install https://github.com/lizmcmanus/Inspectro-Gadget/archive/refs/heads/main.zip
 ```
 
+
 ## Usage
 For each analysis, enter the path to your region or regions of interest. Label(s) for the regions and a specific output directory can also be specified but are not required.
 
 Regions of interest should be binary images in 2 mm isotropic MNI152NLIN6Asym space. 
+
 
 ### Single region
 To obtain receptor estimates for a single region enter that region's mask. A PDF report will be produced in the current working directory or in the output directory specified.
@@ -55,7 +57,19 @@ gadget_out =  gadget(['/home/data/region1_mask.nii.gz'],
               out_root='/home/data/results')
 ```
 
+The report will include a variety of information:
 
+- An image showing the region being analysed, along with the estimated excitation/inhibition ratio for it
+
+![Brain slices showing the region being analysed. The excitation/inhibition ratio for the region is also shown.](images/single-eiratio.png?raw=true "Single region mask image and excitation/inhibition ratio")
+
+- Radarplots showing the receptor fingerprint of the region of interest. Separate ones are plotted for GABA+glutamate genes and for neuromodulators
+
+![Radarplots showing receptor fingerprints for the region of interest.](images/single-radar.png?raw=true "Region of interest receptor fingerprints")
+
+- Violinplots showing the range of gene expression within the region's mask for each of the included genes. GABAA alpha subunits and alpha2 noradrenaline receptor genes are shown here for illustration
+
+![Example violinplots showing expression levels for the region of interest. GABAA alpha subunits and alpha2 noradrenaline receptor genes are shown for illustration.](images/single-violin.png?raw=true "Expression estimates for GABAA alpha subunits and alpha2 NA receptors")
 
 
 ### Two region comparison
@@ -72,15 +86,15 @@ The report will include a variety of information:
 
 - An image showing the two regions being analysed, along with the estimated excitation/inhibition ratio for each
 
-![Brain slices showing the two regions being analysed. The excitation/inhibition ratios for each region are also shown.](images/two-eiratio.png?raw=true "Multiple participant mask overlap image")
+![Brain slices showing the two regions being analysed. The excitation/inhibition ratios for each region are also shown.](images/two-eiratio.png?raw=true "Two region mask images and excitation/inhibition ratios")
 
-- Radarplots showing the receptor fingerprints for each of the regions. Separate ones are plotted for GABA+glutanate genes and for neuromodulators
+- Radarplots showing the receptor fingerprints for each of the regions. Separate ones are plotted for GABA+glutamate genes and for neuromodulators
 
 ![Radarplots showing receptor fingerprints for the two regions.](images/two-radars.png?raw=true "Two region receptor fingerprints")
 
 - Violinplots showing the range of gene expression within each region's mask for each of the included genes. A comparison of the mean and shape of the distributions are also provided. GABAA alpha subunits and alpha2 noradrenaline receptor genes are shown here for illustration
 
-![Example violinplots showing expression levels for each of the two regions. GABAA alpha subunits and alpha2 noradrenaline receptor genes are shown for illustration.](images/two-violins.png?raw=true "Individual expression estimates for GABAA alpha subunits and alpha2 NA receptors")
+![Example violinplots showing expression levels for each of the two regions. GABAA alpha subunits and alpha2 noradrenaline receptor genes are shown for illustration.](images/two-violins.png?raw=true "Regional expression estimates for GABAA alpha subunits and alpha2 NA receptors")
 
 
 ### Multiple participant comparison
@@ -105,7 +119,7 @@ The report will include a variety of information:
 
 - ![Excitation/inhibition ratio estimates for each participant.](images/multi-eiratio.png?raw=true "Multiple participant excitation/inhibition ratios")
 
-- Radarplots showing the receptor fingerprints for each participant's mask. Separate ones are plotted for GABA+glutanate genes and for neuromodulators
+- Radarplots showing the receptor fingerprints for each participant's mask. Separate ones are plotted for GABA+glutamate genes and for neuromodulators
 
 ![Radarplots showing receptor fingerprints for participants.](images/multi-radars.png?raw=true "Multiple participant receptor fingerprints")
 
@@ -113,8 +127,10 @@ The report will include a variety of information:
 
 ![Example violinplots showing expression levels for each of the included genes. A set of AMPA receptor genes are shown for illustration.](images/multi-violins.png?raw=true "Individual expression estimates for a set of AMPA receptor genes")
 
+
 ### Important limitations
 The Allen Human Brain Atlas data comes from six people, five of whom were male. Their ages ranged from 24 to 57 years. As brain morphology and gene expression can differ between the sexes and across the lifespan, the dataset may not be fully representative of the human population. As such, the results produced by this tool should be interpreted with these limitations in mind. 
+
 
 ## Citing
 When reporting results obtained with the tool please cite the following work:
