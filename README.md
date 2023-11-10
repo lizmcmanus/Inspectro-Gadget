@@ -55,6 +55,9 @@ gadget_out =  gadget(['/home/data/region1_mask.nii.gz'],
               out_root='/home/data/results')
 ```
 
+
+![alt text](images/image.jpg?raw=true "Title")
+
 ### Two region comparison
 To compare receptor estimates between two regions, enter masks for each. A PDF report will be produced in the current working directory or in the output directory specified.
 
@@ -65,7 +68,7 @@ gadget_out = gadget([['/home/data/region1_mask.nii.gz'],
                     out_root='/home/data/results')
 ```
 
-### Multiple subject comparison
+### Multiple participant comparison
 To analyse the similarity of receptor estimates across a group of participants, enter masks for each one. A participant overlap nifti image will be created in the current working directory or in the output directory specified, along with a PDF report. 
 
 ```
@@ -76,6 +79,11 @@ gadget_out = gadget(['/home/data/sub-01_region1_mask.nii.gz',
                     mask_labels=['sub-01', 'sub-02', 'sub-03', 'sub-04'],
                     out_root='/home/data/results')
 ```
+
+The report will include an image showing the overlap between participant masks.
+
+![Brain slices showing overlap between the participant masks.](images/multi-overlap.png?raw=true "Multiple participant mask overlap image")
+
 
 ### Important limitations
 The Allen Human Brain Atlas data comes from six people, five of whom were male. Their ages ranged from 24 to 57 years. As brain morphology and gene expression can differ between the sexes and across the lifespan, the dataset may not be fully representative of the human population. As such, the results produced by this tool should be interpreted with these limitations in mind. 
