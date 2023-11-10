@@ -56,7 +56,7 @@ gadget_out =  gadget(['/home/data/region1_mask.nii.gz'],
 ```
 
 
-![alt text](images/image.jpg?raw=true "Title")
+
 
 ### Two region comparison
 To compare receptor estimates between two regions, enter masks for each. A PDF report will be produced in the current working directory or in the output directory specified.
@@ -67,6 +67,21 @@ gadget_out = gadget([['/home/data/region1_mask.nii.gz'],
                     mask_labels=['Region 1', 'Region 2'],
                     out_root='/home/data/results')
 ```
+
+The report will include a variety of information:
+
+- An image showing the two regions being analysed, along with the estimated excitation/inhibition ratio for each
+
+![Brain slices showing the two regions being analysed. The excitation/inhibition ratios for each region are also shown.](images/two-eiratio.png?raw=true "Multiple participant mask overlap image")
+
+- Radarplots showing the receptor fingerprints for each of the regions. Separate ones are plotted for GABA+glutanate genes and for neuromodulators
+
+![Radarplots showing receptor fingerprints for the two regions.](images/two-radars.png?raw=true "Two region receptor fingerprints")
+
+- Violinplots showing the range of gene expression within each region's mask for each of the included genes. A comparison of the mean and shape of the distributions are also provided. GABAA alpha subunits and alpha2 noradrenaline receptor genes are shown here for illustration
+
+![Example violinplots showing expression levels for each of the two regions. GABAA alpha subunits and alpha2 noradrenaline receptor genes are shown for illustration.](images/two-violins.png?raw=true "Individual expression estimates for GABAA alpha subunits and alpha2 NA receptors")
+
 
 ### Multiple participant comparison
 To analyse the similarity of receptor estimates across a group of participants, enter masks for each one. A participant overlap nifti image will be created in the current working directory or in the output directory specified, along with a PDF report. 
@@ -94,7 +109,7 @@ The report will include a variety of information:
 
 ![Radarplots showing receptor fingerprints for participants.](images/multi-radars.png?raw=true "Multiple participant receptor fingerprints")
 
-- Violinplots showing the range of gene expression within each participant's mask for each of the included genes. How far each participant mask's distribution median is from the group average is also provided
+- Violinplots showing the range of gene expression within each participant's mask for each of the included genes. How far each participant mask's distribution median is from the group average is also provided. A set of AMPA receptor genes are shown here for illustration
 
 ![Example violinplots showing expression levels for each of the included genes. A set of AMPA receptor genes are shown for illustration.](images/multi-violins.png?raw=true "Individual expression estimates for a set of AMPA receptor genes")
 
