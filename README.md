@@ -137,7 +137,7 @@ When reporting results obtained with the tool please cite the following work:
 
 _Inspectro-Gadget_
 
-McManus, E., Muhlert, N., Duncan, N.W. InSpectro-Gadget: A tool for estimating neurotransmitter and neuromodulator receptor distributions for MRS voxels. _bioRxiv_ 2023. doi: 10.1101/2023.11.02.565296 
+McManus, E., Muhlert, N., Duncan, N.W., 2024. InSpectro-Gadget: A Tool for Estimating Neurotransmitter and Neuromodulator Receptor Distributions for MRS Voxels. _Neuroinform_. https://doi.org/10.1007/s12021-024-09654-w
 
 _Allen Human Brain Atlas_
 
